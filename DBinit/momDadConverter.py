@@ -50,10 +50,10 @@ if __name__ == '__main__':
 
     foxes[0] = 'NULL'
 
-    with open('momDadConverted.txt', 'w') as outfile:
-        outfile.write('cornell_number mother father\n')
+    with open('momDadConverted.csv', 'w') as outfile:
+        outfile.write('cornell_number,mother,father\n')
         for i in xrange(len(pedigree_number)):
-            outfile.write(cornell_number[i] + ' ' +  foxes[mother[i]] + ' ' + 
+            outfile.write(cornell_number[i] + ',' +  foxes[mother[i]] + ',' + 
                           foxes[father[i]] + '\n')
     
     for i in xrange(len(cornell_number)-1):

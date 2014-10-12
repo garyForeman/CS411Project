@@ -1,0 +1,15 @@
+<html>
+  <head>
+    {% if title %}
+    <title>{{ title }} - FoxDB</title>
+    {% else %}
+    <title>Welcome to FoxDB</title>
+    {% endif %}
+  </head>
+  <body>
+    <div>
+        <a href="{{ url_for('index') }}">Home</a>
+    </div>
+    {% block content %}{% endblock %}
+  </body>
+</html>

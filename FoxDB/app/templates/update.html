@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+
+{% block content %}
+  <h1>Insert new sample ID into sample_info_clean table</h1>
+  <form action="" method="post" name="update">
+      {{ form.hidden_tag() }}
+      <p>
+          Enter the Sample ID:<br>
+          {{ form.sample_id(size=8) }}<br>
+      <p>
+      <p><input type="submit" value="Submit"></p>
+  </form>
+{% endblock %}

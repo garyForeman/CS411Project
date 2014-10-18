@@ -14,5 +14,5 @@ MARKER_TABLE = 'Marker'
 def db_insert(table, attributes):
     '''Function for inserting a new row into table'''
 
-    return ("""INSERT INTO """ + table + """ (cornellnumber) VALUES (%s)""" %
+    return ("""INSERT INTO """ + table + """ (cornellnumber) VALUES ('%s')""" %
             (attributes))

@@ -14,7 +14,7 @@ def update():
     form = UpdateForm()
     if form.validate_on_submit():
         flash('Sample ID = %s' % form.sample_id.data)
-        g.db_cursor.execute(db_insert(SAMPLE_TABLE, (form.sample_id.data))
+        g.db_cursor.execute(db_insert(SAMPLE_TABLE, (form.sample_id.data)))
         return redirect('/update')
     return render_template('update.html', title='Update', form=form)
 

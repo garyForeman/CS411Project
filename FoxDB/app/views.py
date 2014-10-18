@@ -27,6 +27,6 @@ def db_connect():
 
 @app.teardown_request
 def db_disconnect(exception=None):
-   g.db_cursor.close()
    g.db_conn.commit()
+   g.db_cursor.close()
    g.db_conn.close()

@@ -21,7 +21,7 @@ def insert():
         flash("sample_id=" + form.sample_id.data + ", name=" + form.name.data +
               ", generation=" + form.generation.data + ", mother=" +
               form.mother.data + ", father=" + form.father.data + ", notes=" +
-              form.notes.data + ", sex=" + form.sex.data)
+              form.notes.data)# + ", sex=" + str(form.sex.data))
         return redirect('/insert')
     return render_template('insert.html', title='Insert', form=form)
 

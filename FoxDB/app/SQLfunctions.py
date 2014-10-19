@@ -19,7 +19,7 @@ def db_insert(table, attributes):
     """Function for inserting a new row into table"""
 
     return ("""INSERT INTO """ + table + """ (""" + ATTRIBUTES[table][0] + 
-            """) VALUES ('%s');""" % )
+            """) VALUES ('%s');""" % (attributes))
 
 def db_delete(table, attributes):
     """Function for deleting a row in table."""

@@ -8,7 +8,7 @@ class InsertForm(Form):
     name = StringField('name', validators=[Length(min=0, max=20)])
     generation = StringField('generation', validators=[Length(min=0, max=9)])
     sex = RadioField('sex', default=None,
-                     choices=[(1, 'Male'), (2, 'Female'), (None, 'Unkown')])
+                     choices=[('1', 'Male'), ('2', 'Female'), (None, 'Unkown')])
     mother = StringField('mother', validators=[Length(min=0, max=8)])
     father = StringField('father', validators=[Length(min=0, max=8)])
     notes = TextAreaField('notes', validators=[Length(min=0, max=255)])

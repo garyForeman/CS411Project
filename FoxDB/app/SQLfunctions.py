@@ -23,9 +23,17 @@ def db_insert(table, attributes):
             list_of_data.append('NULL')
         elif attribute.type != 'RadioField':
             list_of_data.append("""'""" + attribute.data + """'""")
+
+    attribute_string = '';
+    value_string = '';
+    for i in xrange(len(attributes-1)):
+        attribute_string += ATTRIBUTES[table][i] + ', '
+        value_string += '%s, '
+    attribute_string += ATTRIBUTES[table][len(attributes)-1]
+    value_string += '%s'
             
-    return ("""INSERT INTO """ + table + """ (""" + ATTRIBUTES[table][0] + 
-            ", " + ATTRIBUTES[table][1] + """) VALUES (%s, %s);""" % 
+    return ("""INSERT INTO """ + table + """ (""" + attribute_string + 
+            """) VALUES (""" + value_string + """);""" % 
             tuple(list_of_data))
 
 def db_delete(table, attributes):

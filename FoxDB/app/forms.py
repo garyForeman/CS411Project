@@ -7,3 +7,6 @@ class InsertForm(Form):
     #name = StringField('name')
     #generation = StringField('generation')
     #sex = 
+
+class DeleteForm(Form):
+    sample_id = StringField('sample_id', validators=[DataRequired()])

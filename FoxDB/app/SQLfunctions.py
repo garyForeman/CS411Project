@@ -25,7 +25,8 @@ def db_insert(table, attributes):
             list_of_data.append('NULL')
             
     return ("""INSERT INTO """ + table + """ (""" + ATTRIBUTES[table][0] + 
-            ", " + ATTRIBUTES[1] + """) VALUES (%s, %s);""" % list_of_data)
+            ", " + ATTRIBUTES[table][1] + """) VALUES (%s, %s);""" % 
+            list_of_data)
 
 def db_delete(table, attributes):
     """Function for deleting a row in table."""

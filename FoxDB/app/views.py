@@ -4,6 +4,7 @@ from .forms import InsertForm, DeleteForm
 from flask import g
 from SQLfunctions import DB_NAME, DB_HOST, DB_USER, DB_PASSWD
 from SQLfunctions import db_insert, db_delete
+import MySQLdb
 
 @app.route('/')
 @app.route('/index')

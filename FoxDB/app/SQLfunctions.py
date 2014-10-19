@@ -19,10 +19,10 @@ def db_insert(table, attributes):
     """Function for inserting a new row into table"""
     list_of_data = []
     for attribute in attributes:
-        if attribute and attribute.type != 'RadioField':
-            list_of_data.append("""'""" + attribute.data + """'""")
-        else:
+        if attribute == '':
             list_of_data.append('NULL')
+        elif attribute != '' and attribute.type != 'RadioField':
+            list_of_data.append("""'""" + attribute.data + """'""")
             
     return ("""INSERT INTO """ + table + """ (""" + ATTRIBUTES[table][0] + 
             ", " + ATTRIBUTES[table][1] + """) VALUES (%s, %s);""" % 

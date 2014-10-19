@@ -9,6 +9,12 @@
       <p>
 	  Generation Description (9 char max): {{ form.generation(size=9) }}
       </p>
+      {% for subfield in form.sex %}
+      <tr>
+        <td>{{ subfield }}</td>
+        <td>{{ subfield.label }}</td>
+      </tr>
+      {% endfor %}
       <p>Mother (8 char max): {{ form.mother(size=8) }}</p>
       <p>Father (8 char max): {{ form.father(size=8) }}</p>
       <p>Notes (255 char max):<br>{{form.notes(cols=32, rows=8) }}</p>

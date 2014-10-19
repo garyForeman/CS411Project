@@ -17,8 +17,12 @@ def insert():
     form = InsertForm()
     if form.validate_on_submit():
         g.db_cursor.execute(db_insert(SAMPLE_TABLE, 
-                                      [form.sample_id, form.name]))
-        flash(db_insert(SAMPLE_TABLE, [form.sample_id, form.name]))
+                                      [form.sample_id, form.name, 
+                                       form.generation, form.sex, form.mother,
+                                       form.father, form.notes]))
+        flash(db_insert(SAMPLE_TABLE, 
+                        [form.sample_id, form.name, form.generation, form.sex,
+                         form.mother, form.father, form.notes]))
         flash("sample_id=" + form.sample_id.data + ", name=" + form.name.data +
               ", generation=" + form.generation.data + ", mother=" +
               form.mother.data + ", father=" + form.father.data + ", notes=" +

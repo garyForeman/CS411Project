@@ -1,6 +1,6 @@
 from flask import render_template, flash, redirect
 from app import app
-from .forms import UpdateForm
+from .forms import InsertForm
 from flask import g
 from SQLfunctions import *
 

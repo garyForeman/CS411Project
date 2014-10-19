@@ -30,20 +30,18 @@ def delete():
    form = DeleteForm()
    if form.validate_on_submit():
       g.db_cursor.execute(db_delete(SAMPLE_TABLE, form.sample_id.data))
+      g.db_conn.commit()
       flash(db_delete(SAMPLE_TABLE, form.sample_id.data))
       return redirect('/delete')
    return render_template('delete.html', title='Delete', form=form)
 
 @app.before_request
 def db_connect():
-    #g.db_conn = MySQLdb.connect(db=DB_NAME, host=DB_HOST, passwd=DB_PASSWD,
-    #                            user=DB_USER)
-    #g.db_cursor = g.db_conn.cursor()
-   pass
+    g.db_conn = MySQLdb.connect(db=DB_NAME, host=DB_HOST, passwd=DB_PASSWD,
+                                user=DB_USER)
+    g.db_cursor = g.db_conn.cursor()
 
 @app.teardown_request
 def db_disconnect(exception=None):
-   #g.db_conn.commit()
-   #g.db_cursor.close()
-   #g.db_conn.close()
-   pass
+   g.db_cursor.close()
+   g.db_conn.close()

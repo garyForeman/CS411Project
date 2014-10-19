@@ -5,7 +5,12 @@
   <form action="" method="post" name="insert">
       {{ form.hidden_tag() }}
       <p>Sample ID (8 char max): {{ form.sample_id(size=8) }}</p>
-      <p>Name (20 char max): {{ form.name(size=20) }}<br></p>
+      <p>Name (20 char max): {{ form.name(size=20) }}</p>
+      <p>
+	  Generation Description (9 char max): {{ form.generation(size=9) }}
+      </p>
+      <p>Mother (8 char max): {{ form.mother(size=8) }}</p>
+      <p>Father (8 char max): {{ form.father(size=8) }}</p>
       <p><input type="submit" value="Submit"></p>
   </form>
 {% endblock %}

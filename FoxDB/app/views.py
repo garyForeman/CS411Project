@@ -18,7 +18,7 @@ def insert():
     if form.validate_on_submit():
         #g.db_cursor.execute(db_insert(SAMPLE_TABLE, form.sample_id.data))
         #flash(db_insert(SAMPLE_TABLE, form.sample_id.data))
-        flash("sample_id=" + form.sample_id.data + ", name=" + form.name.data)# +
+        flash("sample_id=" + form.sample_id.data)# + ", name=" + form.name.data)# +
              # ", generation=" + form.generation.data + ", mother=" +
              # form.mother.data + ", father=" + form.father.data)# + ", notes=" +
               #form.notes.data + ", sex=" + form.sex.data)
@@ -36,12 +36,12 @@ def delete():
 
 @app.before_request
 def db_connect():
-    g.db_conn = MySQLdb.connect(db=DB_NAME, host=DB_HOST, passwd=DB_PASSWD,
-                                user=DB_USER)
-    g.db_cursor = g.db_conn.cursor()
+    #g.db_conn = MySQLdb.connect(db=DB_NAME, host=DB_HOST, passwd=DB_PASSWD,
+    #                            user=DB_USER)
+    #g.db_cursor = g.db_conn.cursor()
 
 @app.teardown_request
 def db_disconnect(exception=None):
    #g.db_conn.commit()
-   g.db_cursor.close()
-   g.db_conn.close()
+   #g.db_cursor.close()
+   #g.db_conn.close()

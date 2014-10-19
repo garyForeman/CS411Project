@@ -39,9 +39,11 @@ def db_connect():
     #g.db_conn = MySQLdb.connect(db=DB_NAME, host=DB_HOST, passwd=DB_PASSWD,
     #                            user=DB_USER)
     #g.db_cursor = g.db_conn.cursor()
+   pass
 
 @app.teardown_request
 def db_disconnect(exception=None):
    #g.db_conn.commit()
    #g.db_cursor.close()
    #g.db_conn.close()
+   pass

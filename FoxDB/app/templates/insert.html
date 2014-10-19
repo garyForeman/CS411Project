@@ -10,7 +10,7 @@
 	  Generation Description (9 char max): {{ form.generation(size=9) }}
       </p>
       <p>Sex:
-          {% for subfield in form.sex %}
+          {% for subfield in form.sex() %}
               {{ subfield }} {{ subfield.label }} |
           {% endfor %}
       </p>

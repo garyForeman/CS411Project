@@ -1,6 +1,6 @@
 from flask.ext.wtf import Form
 from wtforms import StringField#, RadioField, TextAreaField
-from wtforms.validators import DataRequired#, Length
+from wtforms.validators import DataRequired, Length
 
 class InsertForm(Form):
     sample_id = StringField('sample_id', validators=[DataRequired(),

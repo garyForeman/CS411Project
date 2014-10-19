@@ -3,6 +3,7 @@ from app import app
 from .forms import InsertForm, DeleteForm
 from flask import g
 from SQLfunctions import DB_NAME, DB_HOST, DB_USER, DB_PASSWD
+from SQLfunctions import SAMPLE_TABLE
 from SQLfunctions import db_insert, db_delete
 import MySQLdb
 
@@ -24,7 +25,7 @@ def insert():
 def delete():
    form = DeleteForm()
    if form.validate_on_submit():
-      g.db_cursor.execute(db_delete(SAMPLE_TABlE, form.sample_id.data))
+      g.db_cursor.execute(db_delete(SAMPLE_TABLE, form.sample_id.data))
       flash(db_delete(SAMPLE_TABLE, form.sample_id.data))
       return redirect('/delete')
    return render_template('delete.html', title='Delete', form=form)

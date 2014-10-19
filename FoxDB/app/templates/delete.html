@@ -1,13 +1,10 @@
 {% extends "base.html" %}
 
 {% block content %}
-  <h1>Delete sample ID from sample_info_clean table</h1>
+  <h1>Delete from Sample Table</h1>
   <form action="" method="post" name="delete">
       {{ form.hidden_tag() }}
-      <p>
-          Enter the Sample ID:<br>
-          {{ form.sample_id(size=8) }}<br>
-      <p>
+      <p>Sample ID: {{ form.sample_id(size=8) }}</p>
       <p><input type="submit" value="Submit"></p>
   </form>
 {% endblock %}

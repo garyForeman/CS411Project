@@ -1,5 +1,5 @@
 from flask.ext.wtf import Form
-from wtforms import StringField, TextAreaField#, RadioField
+from wtforms import StringField, TextAreaField, RadioField
 from wtforms.validators import DataRequired, Length
 
 class InsertForm(Form):

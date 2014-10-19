@@ -26,7 +26,7 @@ def db_insert(table, attributes):
 
     attribute_string = '';
     value_string = '';
-    for i in xrange(len(attributes-1)):
+    for i in xrange(len(attributes)-1):
         attribute_string += ATTRIBUTES[table][i] + ', '
         value_string += '%s, '
     attribute_string += ATTRIBUTES[table][len(attributes)-1]

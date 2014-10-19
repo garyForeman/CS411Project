@@ -17,9 +17,15 @@ ATTRIBUTES = {SAMPLE_TABLE: ['cornellnumber', 'name',
 
 def db_insert(table, attributes):
     """Function for inserting a new row into table"""
-
+    list_of_data = []
+    for attribute in attributes:
+        if attribute and attribute.type != 'RadioField':
+            list_of_data.append("""'""" + attribute.data + """'""")
+        else:
+            list_of_data.append('NULL')
+            
     return ("""INSERT INTO """ + table + """ (""" + ATTRIBUTES[table][0] + 
-            """) VALUES ('%s');""" % (attributes))
+            ", " + ATTRIBUTES[1] + """) VALUES (%s, %s);""" % list_of_data)
 
 def db_delete(table, attributes):
     """Function for deleting a row in table."""

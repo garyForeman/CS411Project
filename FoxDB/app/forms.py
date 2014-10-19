@@ -3,7 +3,7 @@ from wtforms import StringField#, RadioField, TextAreaField
 from wtforms.validators import DataRequired#, Length
 
 class InsertForm(Form):
-    sample_id = StringField('sample_id', validators=[DataRequired()],
+    sample_id = StringField('sample_id', validators=[DataRequired(),
                             Length(min=1, max=8)])
     name = StringField('name', validators=[Length(min=0, max=20)])
     #generation = StringField('generation')#, validators=[Length(min=0, max=9)])

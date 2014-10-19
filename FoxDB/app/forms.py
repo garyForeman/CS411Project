@@ -2,7 +2,7 @@ from flask.ext.wtf import Form
 from wtforms import StringField
 from wtforms.validators import DataRequired
 
-class UpdateForm(Form):
+class InsertForm(Form):
     sample_id = StringField('sample_id', validators=[DataRequired()])
     #name = StringField('name')
     #generation = StringField('generation')

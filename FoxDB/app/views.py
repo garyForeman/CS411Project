@@ -9,15 +9,14 @@ from SQLfunctions import *
 def index():
    return render_template('index.html', title='Home')
 
-@app.route('/update', methods=['GET', 'POST'])
-def update():
-    form = UpdateForm()
+@app.route('/insert', methods=['GET', 'POST'])
+def insert():
+    form = InsertForm()
     if form.validate_on_submit():
-        flash('Sample ID = %s' % form.sample_id.data)
         g.db_cursor.execute(db_insert(SAMPLE_TABLE, form.sample_id.data))
         flash(db_insert(SAMPLE_TABLE, form.sample_id.data))
-        return redirect('/update')
-    return render_template('update.html', title='Update', form=form)
+        return redirect('/insert')
+    return render_template('insert.html', title='Insert', form=form)
 
 @app.before_request
 def db_connect():

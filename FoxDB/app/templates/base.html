@@ -9,8 +9,9 @@
   <body>
     <div>
         <a href="{{ url_for('index') }}">Home</a>
-        | <a href="{{ url_for('update') }}">Update</a>
+        | <a href="{{ url_for('insert') }}">Insert</a>
     </div>
+    {% block content %}{% endblock %}
     <hr>
     {% with messages = get_flashed_messages() %}
       {% if messages %}
@@ -21,6 +22,5 @@
         </ul>
       {% endif %}
     {% endwith %}
-    {% block content %}{% endblock %}
   </body>
 </html>

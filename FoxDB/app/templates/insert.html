@@ -11,6 +11,7 @@
       </p>
       <p>Mother (8 char max): {{ form.mother(size=8) }}</p>
       <p>Father (8 char max): {{ form.father(size=8) }}</p>
+      <p>Notes (255 char max): {{form.notes(cols=32, rows=8) }}</p>
       <p><input type="submit" value="Submit"></p>
   </form>
 {% endblock %}

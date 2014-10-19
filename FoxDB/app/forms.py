@@ -1,5 +1,5 @@
 from flask.ext.wtf import Form
-from wtforms import StringField#, RadioField, TextAreaField
+from wtforms import StringField, TextAreaField#, RadioField
 from wtforms.validators import DataRequired, Length
 
 class InsertForm(Form):
@@ -12,7 +12,7 @@ class InsertForm(Form):
     #                 default=None)
     mother = StringField('mother', validators=[Length(min=0, max=8)])
     father = StringField('father', validators=[Length(min=0, max=8)])
-    #notes = TextAreaField('notes', validators=[Length(min=0, max=255)])
+    notes = TextAreaField('notes', validators=[Length(min=0, max=255)])
 
 class DeleteForm(Form):
     sample_id = StringField('sample_id', validators=[DataRequired()])

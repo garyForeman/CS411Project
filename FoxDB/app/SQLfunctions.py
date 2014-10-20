@@ -31,10 +31,8 @@ def db_insert(table, attributes):
     #    flash(type(datum))
 
     attribute_string = ATTRIBUTES[table][0]
-    value_string = """%s""";
     for i in xrange(1, len(attributes)):
         attribute_string += ', ' + ATTRIBUTES[table][i]
-        value_string += """, %s"""
      
     #flash(attribute_string)
     #flash(value_string)

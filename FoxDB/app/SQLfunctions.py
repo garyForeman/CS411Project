@@ -27,20 +27,20 @@ def db_insert(table, attributes):
         else:
             list_of_data.append(attribute.data)
 
-    for datum in list_of_data:
-        flash(datum)
+    #for datum in list_of_data:
+    #    flash(datum)
 
     attribute_string = ATTRIBUTES[table][0]
-    value_string = '%s';
+    value_string = """%s""";
     for i in xrange(1, len(attributes)):
         attribute_string += ', ' + ATTRIBUTES[table][i]
-        value_string += ', %s'
+        value_string += """, %s"""
      
-    flash(attribute_string)
-    flash(value_string)
-    #return ("""INSERT INTO """ + table + """ (""" + attribute_string + 
-    #        """) VALUES (""" + value_string + """);""" % 
-    #        tuple(list_of_data))
+    #flash(attribute_string)
+    #flash(value_string)
+    return ("""INSERT INTO """ + table + """ (""" + attribute_string + 
+            """) VALUES (""" + value_string + """);""" % 
+            tuple(list_of_data))
 
 def db_delete(table, attributes):
     """Function for deleting a row in table."""

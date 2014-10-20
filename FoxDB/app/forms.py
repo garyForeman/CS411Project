@@ -14,5 +14,9 @@ class InsertForm(Form):
     father = StringField('father', validators=[Length(min=0, max=8)])
     notes = TextAreaField('notes', validators=[Length(min=0, max=255)])
 
+class UpdateForm(InsertForm):
+    new_sample_id = StringField('new_sample_id', 
+                                validators=[Length(min=0, max=8)])
+
 class DeleteForm(Form):
     sample_id = StringField('sample_id', validators=[DataRequired()])

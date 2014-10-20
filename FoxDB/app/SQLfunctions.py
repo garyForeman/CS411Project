@@ -40,6 +40,21 @@ def db_insert(table, attributes):
             """) VALUES (%s, %s, %s, %s, %s, %s, %s);""" % 
             tuple(list_of_data))
 
+def db_update(table, key, attributes):
+    """Function for updating attributes of table"""
+    set_string = ''
+    for i, attribute in enumerate(attributes):
+        if attribute.data != '':
+            set_string += ATTRIBUTES[table][i] + "="
+            if attribute.type != 'RadioField':
+                set_string += """'""" + attribute.data + """', """
+            else:
+                set_string += attribute.data + ", "
+    set_string = set_string.rstrip(", ")
+
+    return("""UPDATE """ + table + """ SET """ + set_string + """ WHERE """ + 
+           ATTRIBUTES[table][0] + """='""" + key.data + """';""")
+
 def db_delete(table, attributes):
     """Function for deleting a row in table."""
 

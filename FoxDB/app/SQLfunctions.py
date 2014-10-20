@@ -27,8 +27,8 @@ def db_insert(table, attributes):
         else:
             list_of_data.append(attribute.data)
 
-    #for datum in list_of_data:
-    #    flash(datum)
+    for datum in list_of_data:
+        flash(type(datum))
 
     attribute_string = ATTRIBUTES[table][0]
     value_string = """%s""";
@@ -38,9 +38,9 @@ def db_insert(table, attributes):
      
     #flash(attribute_string)
     #flash(value_string)
-    return ("""INSERT INTO """ + table + """ (""" + attribute_string + 
-            """) VALUES (""" + value_string + """);""" % 
-            tuple(list_of_data))
+    #return ("""INSERT INTO """ + table + """ (""" + attribute_string + 
+    #        """) VALUES (""" + value_string + """);""" % 
+    #        tuple(list_of_data))
 
 def db_delete(table, attributes):
     """Function for deleting a row in table."""

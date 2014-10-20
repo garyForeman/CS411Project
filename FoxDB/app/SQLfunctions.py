@@ -1,6 +1,7 @@
 '''Functions for querying, inserting rows, and deleting rows from FoxDB.'''
 
 import MySQLdb
+from flask import flash
 
 
 DB_NAME = 'gforema2$foxdb'

@@ -1,26 +1,50 @@
 {% extends "base.html" %}
 
 {% block content %}
-  <h1>Update Sample Table</h1>
-  <form action="" method="post" name="update">
-      {{ form.hidden_tag() }}
-      <p>Sample ID to Update (8 char max): {{ form.sample_id(size=8) }}</p>
-      <p>New Sample ID Value (8 char max): {{ form.new_sample_id(size=8) }}</p>
-      <p>Name (20 char max): {{ form.name(size=20) }}</p>
+  <h2>Update Sample Table</h2>
+  <form action="" method="post" name="sample_form">
+      {{ sample_form.hidden_tag() }}
       <p>
-	  Generation Description (9 char max): {{ form.generation(size=9) }}
+	Sample ID to Update (8 char max): {{ sample_form.sample_id(size=8) }}
+      </p>
+      <p>
+	New Sample ID Value (8 char max): {{ sample_form.new_sample_id(size=8) }}
+      </p>
+      <p>Name (20 char max): {{ sample_form.name(size=20) }}</p>
+      <p>
+	  Generation Description (9 char max): {{ sample_form.generation(size=9) }}
       </p>
       <p>Sex:
-      {% for subfield in form.sex %}
+      {% for subfield in sample_form.sex %}
       <tr>
         <td>{{ subfield }}</td>
         <td>{{ subfield.label }}</td>
       </tr>
       {% endfor %}
       </p>
-      <p>Mother (8 char max): {{ form.mother(size=8) }}</p>
-      <p>Father (8 char max): {{ form.father(size=8) }}</p>
-      <p>Notes (255 char max):<br>{{form.notes(cols=32, rows=8) }}</p>
-      <p><input type="submit" value="Submit"></p>
+      <p>Mother (8 char max): {{ sample_form.mother(size=8) }}</p>
+      <p>Father (8 char max): {{ sample_form.father(size=8) }}</p>
+      <p>Notes (255 char max):<br>{{ sample_form.notes(cols=32, rows=8) }}</p>
+      <p><input type="submit" value="Update Sample"></p>
+  </form>
+  <hr>
+  <h2>Update Marker Table</h2>
+  <form action="" method="post" name="marker_form">
+      {{ marker_form.hidden_tag() }}
+      <p>
+	Marker ID to Update (15 char max): {{ marker_form.marker_id(size=15) }}
+      </p>
+      <p>
+	New Marker ID Value (15 char max): {{ marker_form.new_marker_id(size=15) }}
+      </p>
+      <p>
+        Meiotic Position (5 char max): {{ marker_form.meiotic_pos(size=5) }}
+      </p>
+      <p>Dog Chromosome (2 char max): {{ marker_form.dog_chrom(size=2) }}</p>
+      <p>Dog Position: {{ marker_form.dog_pos(size=15) }}</p>
+      <p>Fox Segment (15 char max): {{ marker_form.fox_seg(size=15) }}</p>
+      <p>Fox Chromosome (15 char max): {{ marker_form.fox_chrom(size=15) }}</p>
+      <p>Fox Position: {{marker_form.fox_pos(size=15) }}</p>
+      <p><input type="submit" value="Update Marker"></p>
   </form>
 {% endblock %}

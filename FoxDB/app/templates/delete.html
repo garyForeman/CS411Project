@@ -1,10 +1,17 @@
 {% extends "base.html" %}
 
 {% block content %}
-  <h1>Delete from Sample Table</h1>
-  <form action="" method="post" name="delete">
-      {{ form.hidden_tag() }}
-      <p>Sample ID: {{ form.sample_id(size=8) }}</p>
-      <p><input type="submit" value="Submit"></p>
+  <h2>Delete from Sample Table</h2>
+  <form action="" method="post" name="sample_form">
+      {{ sample_form.hidden_tag() }}
+      <p>Sample ID: {{ sample_form.sample_id(size=8) }}</p>
+      <p><input type="submit" value="Delete Sample"></p>
+  </form>
+  <hr>
+  <h2>Delete from Marker Table</h2>
+  <form action="" method="post" name="marker_form">
+      {{ marker_form.hidden_tag() }}
+      <p>Marker ID: {{ marker_form.marker_id(size=15) }}</p>
+      <p><input type="submit" value="Delete Marker"></p>
   </form>
 {% endblock %}

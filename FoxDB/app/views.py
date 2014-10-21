@@ -62,7 +62,7 @@ def update():
         return redirect('/update')
     elif marker_form.validate_on_submit():
         sql_string = db_update(MARKER_TABLE, marker_form.marker_id,
-                               [marker_form.marker_id,
+                               [marker_form.new_marker_id,
                                 marker_form.meiotic_pos,
                                 marker_form.dog_chrom,
                                 marker_form.dog_pos,

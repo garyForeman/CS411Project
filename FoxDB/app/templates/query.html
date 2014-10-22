@@ -1,0 +1,70 @@
+{% extends "base.html" %}
+
+{% block content %}
+  <h2>FoxDB Query</h2>
+  <form action="" method="post" name="form">
+      {{ form.hidden_tag() }}
+      <table>
+	<tr>
+	  <th>Sample Table Columns:</th>
+	  <th>Genotype Table Columns:</th>
+	  <th>Marker Table Columns:</th>
+	</tr>
+	<tr>
+	  <td>{{ form.sample_all }} {{ form.sample_all.label }}</td>
+	  <td>{{ form.genotype_all }} {{ form.genotype_all.label }}</td>
+	  <td>{{ form.marker_all }} {{ form.marker_all.label }}</td>
+	</tr>
+	<tr>
+	  <td>{{ form.sample_sample_id}} {{ form.sample_sample_id.label }}</td>
+	  <td>
+	    {{ form.genotype_sample_id }} {{ form.genotype_sample_id.label }}
+	  </td>
+	  <td>{{ form.marker_marker_id }} {{ form.marker_marker_id.label }}</td>
+	</tr>
+	<tr>
+	  <td>{{ form.sample_name }} {{ form.sample_name.label }}</td>
+	  <td>
+	    {{ form.genotype_marker_id }} {{ form.genotype_marker_id.label }}
+	  </td>
+	  <td>
+	    {{ form.marker_meiotic_pos }} {{ form.marker_meiotic_pos.label }}
+	  </td>
+	</tr>
+	<tr>
+	  <td>
+	    {{ form.sample_generation }} {{ form.sample_generation.label }}
+	  </td>
+	  <td>
+	    {{ form.genotype_genotype1 }} {{ form.genotype_genotype1.label }}
+	  </td>
+	  <td>{{ form.marker_dog_chrom }} {{ form.marker_dog_chrom.label }}</td>
+	</tr>
+	<tr>
+	  <td>{{ form.sample_sex }} {{ form.sample_sex.label }}</td>
+	  <td>
+	    {{ form.genotype_genotype2 }} {{ form.genotype_genotype2.label }}
+	  </td>
+	  <td>{{ form.marker_dog_pos }} {{ form.marker_dog_pos.label }}</td>
+	</tr>
+	<tr>
+	  <td>{{ form.sample_mother }} {{ form.sample_mother.label }}</td>
+	  <td></td>
+	  <td>{{ form.marker_fox_seq }} {{ form.marker_fox_seq.label }}</td>
+	</tr>
+	<tr>
+	  <td>{{ form.sample_father }} {{ form.sample_father.label }}</td>
+	  <td></td>
+	  <td>{{ form.marker_fox_chrom }} {{ form.marker_fox_chrom.label }}</td>
+	</tr>
+	<tr>
+	  <td>{{ form.sample_notes }} {{ form.sample_notes.label }}</td>
+	  <td></td>
+	  <td>{{ form.marker_fox_pos }} {{ form.marker_fox_pos.label }}</td>
+	</tr>
+      </table>
+      <hr>
+      <p>WHERE Clause:<br>{{ form.where_clause(cols=128, rows=8) }}</p>
+      <p><input type="submit" value="Submit Query"></p>
+  </form>
+{% endblock %}

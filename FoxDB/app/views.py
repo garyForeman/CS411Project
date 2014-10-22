@@ -3,6 +3,7 @@ from app import app
 from .forms import InsertSampleForm, UpdateSampleForm, DeleteSampleForm
 from .forms import InsertGenotypeForm, UpdateGenotypeForm, DeleteGenotypeForm
 from .forms import InsertMarkerForm, UpdateMarkerForm, DeleteMarkerForm
+from .forms import QueryForm
 from flask import g
 from app.SQLfunctions import DB_NAME, DB_HOST, DB_USER, DB_PASSWD
 from app.SQLfunctions import db_insert, db_update, db_delete
@@ -133,6 +134,11 @@ def delete():
     return render_template('delete.html', title='Delete',
                            sample_form=sample_form, marker_form=marker_form,
                            genotype_form=genotype_form)
+
+@app.route('/query', methods=['GET', 'POST'])
+def query():
+    form = QueryForm()
+    return render_template('query.html', title='Query', form=form)
 
 @app.before_request
 def db_connect():

@@ -113,7 +113,7 @@ class QueryForm(Form):
     marker_dog_pos = BooleanField('Dog Position (' + MARKER_TABLE + '.' +
                                   ATTRIBUTES[MARKER_TABLE][3] + ')',
                                   default=False)
-    marker_fox_seq = BooleanField('Fox Sequence (' + MARKER_TABLE + '.' +
+    marker_fox_seg = BooleanField('Fox Segment (' + MARKER_TABLE + '.' +
                                   ATTRIBUTES[MARKER_TABLE][4] + ')',
                                   default=False)
     marker_fox_chrom = BooleanField('Fox Chromosome (' + MARKER_TABLE + '.' +

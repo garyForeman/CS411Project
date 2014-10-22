@@ -138,6 +138,9 @@ def delete():
 @app.route('/query', methods=['GET', 'POST'])
 def query():
     form = QueryForm()
+    if form.validate_on_submit():
+        #flash(str(type(form.sample_sample_id.data)))
+        return redirect('/query')
     return render_template('query.html', title='Query', form=form)
 
 @app.before_request

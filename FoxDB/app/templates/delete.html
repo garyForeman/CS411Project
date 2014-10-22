@@ -8,6 +8,14 @@
       <p><input type="submit" value="Delete Sample"></p>
   </form>
   <hr>
+  <h2>Delete from Genotype Table</h2>
+  <form action="" method="post" name="genotype_form">
+      {{ genotype_form.hidden_tag() }}
+      <p>Sample ID: {{ genotype_form.sample_id(size=8) }}</p>
+      <p>Marker ID: {{ genotype_form.marker_id(size=15) }}</p>
+      <p><input type="submit" value="Delete Genotype"></p>
+  </form>
+  <hr>
   <h2>Delete from Marker Table</h2>
   <form action="" method="post" name="marker_form">
       {{ marker_form.hidden_tag() }}

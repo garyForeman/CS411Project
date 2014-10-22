@@ -25,6 +25,14 @@ class InsertMarkerForm(Form):
     fox_chrom = StringField('fox_chrom', validators=[Length(min=0, max=15)])
     fox_pos = IntegerField('fox_pos', validators=[Optional()])
 
+class InsertGenotypeForm(Form):
+    sample_id = StringField('sample_id',
+                            validators=[DataRequired(), Length(min=1, max=8)])
+    marker_id = StringField('marker_id',
+                            validators=[DataRequired(), Length(min=1, max=15)])
+    genotype1 = IntegerField('genotype1', validators=[Optional()])
+    genotype2 = IntegerField('genotype2', validators=[Optional()])
+
 class UpdateSampleForm(InsertSampleForm):
     new_sample_id = StringField('new_sample_id',
                                 validators=[Length(min=0, max=8)])
@@ -33,9 +41,18 @@ class UpdateMarkerForm(InsertMarkerForm):
     new_marker_id = StringField('new_marker_id',
                                 validators=[Length(min=0, max=15)])
 
+class UpdateGenotypeForm(InsertGenotypeForm):
+    new_sample_id = StringField('new_sample_id',
+                                validators=[Length(min=0, max=8)])
+    new_marker_id = StringField('new_marker_id',
+                                validators=[Length(min=0, max=15)])
+
 class DeleteSampleForm(Form):
     sample_id = StringField('sample_id', validators=[DataRequired()])
 
 class DeleteMarkerForm(Form):
-    marker_id = StringField('marker_id',
-                            validators=[Length(min=0, max=15)])
+    marker_id = StringField('marker_id', validators=[DataRequired()])
+
+class DeleteGenotypeForm(Form):
+    sample_id = StringField('sample_id', validators=[DataRequired()])
+    marker_id = StringField('marker_id', validators=[DataRequired()])

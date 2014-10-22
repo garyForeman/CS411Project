@@ -11,14 +11,17 @@ DB_USER = 'gforema2'
 DB_PASSWD = 'Genesis411'
 SAMPLE_TABLE = 'sample_info_clean'
 SAMPLE_FILE = '../../DBinit/sample_infoOct19.csv'
-GENOTYPE_TABLE = 'HasGenotypeAt'
+GENOTYPE_TABLE = 'has_genotype'
+GENOTYPE_FILE = '../../DBinit/genotypesOct19.csv'
 MARKER_TABLE = 'markers'
 MARKER_FILE = '../../DBinit/markersOct19.csv'
 ATTRIBUTES = {SAMPLE_TABLE: ['cornellnumber', 'name',
                              'generationdescription', 'sex_male1',
                              'mother', 'father', 'notes'],
               MARKER_TABLE: ['markername', 'MeioticPos', 'DogChr', 'DogPos',
-                             'FoxChrSeg', 'FoxChr', 'FoxChrPos']
+                             'FoxChrSeg', 'FoxChr', 'FoxChrPos'],
+              GENOTYPE_TABLE: ['cornellnumber', 'markername', 'genotype1',
+                               'genotype2']
 }
 
 def db_insert(table, attributes):
@@ -41,14 +44,17 @@ def db_insert(table, attributes):
     for i in xrange(1, len(attributes)):
         attribute_string += ', ' + ATTRIBUTES[table][i]
 
+    sql_string = ("""INSERT INTO """ + table + """ (""" + attribute_string +
+                  """) VALUES (""")
+
     if table == SAMPLE_TABLE:
-        return ("""INSERT INTO """ + table + """ (""" + attribute_string +
-                """) VALUES (%s, %s, %s, %s, %s, %s, %s);""" %
+        return (sql_string + """%s, %s, %s, %s, %s, %s, %s);""" %
                 tuple(list_of_data))
     elif table == MARKER_TABLE:
-        return ("""INSERT INTO """ + table + """ (""" + attribute_string +
-                """) VALUES (%s, %s, %s, %s, %s, %s, %s);""" %
+        return (sql_string + """%s, %s, %s, %s, %s, %s, %s);""" %
                 tuple(list_of_data))
+    elif table == GENOTYPE_TABLE:
+        return sql_string + """%s, %s, %s, %s);""" % tuple(list_of_data)
 
 def db_update(table, key, attributes):
     """Function for updating attributes of table. Note key will be a list for
@@ -66,18 +72,28 @@ def db_update(table, key, attributes):
                 set_string += str(attribute.data) + ", "
     set_string = set_string.rstrip(", ")
 
+    sql_string = ("""UPDATE """ + table + """ SET """ + set_string +
+                  """ WHERE """)
+
     if table == SAMPLE_TABLE or table == MARKER_TABLE:
-        return("""UPDATE """ + table + """ SET """ + set_string +
-               """ WHERE """ + ATTRIBUTES[table][0] + """='""" +
+        return(sql_string + ATTRIBUTES[table][0] + """='""" +
                key.data + """';""")
+    elif table == GENOTYPE_TABLE:
+        return(sql_string + ATTRIBUTES[table][0] + """='""" +
+               key[0].data + """' AND """ + ATTRIBUTES[table][1] + """='""" +
+               key[1].data + """';""")
 
 def db_delete(table, key):
     """Function for deleting a row in table. Note key will be a list for
     genotype table which has more than one key attribute."""
 
+    sql_string = """DELETE FROM """ + table + """ WHERE """
+
     if table == SAMPLE_TABLE or table == MARKER_TABLE:
-        return("""DELETE FROM """ + table + """ WHERE """ +
-               ATTRIBUTES[table][0] + """='%s';""" % (key))
+        return sql_string + ATTRIBUTES[table][0] + """='%s';""" % (key)
+    elif table == GENOTYPE_TABLE:
+        return(sql_string + ATTRIBUTES[table][0] + """='%s' AND """ % key[0] +
+               ATTRIBUTES[table][1] + """='%s';""" % key[1])
 
 def import_data(table, csvname):
     """Function to declare table and initalize it with values from csvfile"""
@@ -137,6 +153,34 @@ def import_data(table, csvname):
                       "notes) VALUES({0}, {1}, {2}, {3}, {4}, {5}, {6});"
                       .format(cornellnumber, name, generation, sex, mother,
                               father, notes))
+    elif table == GENOTYPE_TABLE:
+        c.execute("""CREATE TABLE """ + table + """(""" +
+                  ATTRIBUTES[table][0] + """ VARCHAR(8), """+
+                  ATTRIBUTES[table][1] + """ VARCHAR(15), """ +
+                  ATTRIBUTES[table][2] + """ INTEGER, """ +
+                  ATTRIBUTES[table][3] + """ INTEGER,""" +
+                  """PRIMARY KEY (""" + ATTRIBUTES[table][0] + """, """ +
+                  ATTRIBUTES[table][1] + """),""" +
+                  """FOREIGN KEY (""" + ATTRIBUTES[table][0] + """) """ +
+                  """REFERENCES """ + SAMPLE_TABLE + """(""" + 
+                  ATTRIBUTES[SAMPLE_TABLE][0] + 
+                  """) ON DELETE CASCADE ON UPDATE CASCADE, """ +
+                  """FOREIGN KEY (""" + ATTRIBUTES[table][1] + """) """ +
+                  """REFERENCES """ + MARKER_TABLE + """(""" + 
+                  ATTRIBUTES[MARKER_TABLE][0] +
+                  """) ON DELETE CASCADE ON UPDATE CASCADE);""")
+
+        data = list(csv.reader(open(csvname, 'r'), delimiter=','))
+
+        for line in data[1:]:
+            cornellnumber = "'" + line[0].replace('"', '') + "'"
+            markername = "'" + line[1].replace('"', '') + "'"
+            genotype1 = line[2].replace('"', '')
+            genotype2 = line[3].replace('"', '')
+            c.execute("""INSERT INTO has_genotype(cornellnumber, """ +
+                      """markername, genotype1, genotype2) """ +
+                      """VALUES({0}, {1}, {2}, {3});"""
+                      .format(cornellnumber, markername, genotype1, genotype2))
 
     conn.commit()
     c.close()
@@ -145,3 +189,4 @@ def import_data(table, csvname):
 if __name__ == '__main__':
     import_data(MARKER_TABLE, MARKER_FILE)
     import_data(SAMPLE_TABLE, SAMPLE_FILE)
+    import_data(GENOTYPE_TABLE, GENOTYPE_FILE)

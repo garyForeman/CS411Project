@@ -28,6 +28,30 @@
       <p><input type="submit" value="Update Sample"></p>
   </form>
   <hr>
+  <h2>Update Genotype Table</h2>
+  <form action="" method="post" name="genotype_form">
+      {{ genotype_form.hidden_tag() }}
+      <p>
+	Sample ID to Update (8 char max): {{ genotype_form.sample_id(size=8) }}
+      </p>
+      <p>
+	Marker ID to Update (15 char max): {{ genotype_form.marker_id(size=15) }}
+      </p>
+      <p>
+	New Sample ID Value (8 char max): {{ genotype_form.new_sample_id(size=8) }}
+      </p>
+      <p>
+	New Marker ID Value (15 char max): {{ genotype_form.new_marker_id(size=15) }}
+      </p>
+      <p>
+	Genotype Pair Member 1 (Integer): {{ genotype_form.genotype1(size=15) }}
+      </p>
+      <p>
+	Genotype Pair Member 2 (Integer): {{ genotype_form.genotype2(size=15) }}
+      </p>
+      <p><input type="submit" value="Update Genotype"></p>
+  </form>
+  <hr>
   <h2>Update Marker Table</h2>
   <form action="" method="post" name="marker_form">
       {{ marker_form.hidden_tag() }}
@@ -41,10 +65,10 @@
         Meiotic Position (5 char max): {{ marker_form.meiotic_pos(size=5) }}
       </p>
       <p>Dog Chromosome (2 char max): {{ marker_form.dog_chrom(size=2) }}</p>
-      <p>Dog Position: {{ marker_form.dog_pos(size=15) }}</p>
+      <p>Dog Position (Integer): {{ marker_form.dog_pos(size=15) }}</p>
       <p>Fox Segment (15 char max): {{ marker_form.fox_seg(size=15) }}</p>
       <p>Fox Chromosome (15 char max): {{ marker_form.fox_chrom(size=15) }}</p>
-      <p>Fox Position: {{marker_form.fox_pos(size=15) }}</p>
+      <p>Fox Position (Integer): {{marker_form.fox_pos(size=15) }}</p>
       <p><input type="submit" value="Update Marker"></p>
   </form>
 {% endblock %}

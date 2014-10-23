@@ -20,6 +20,8 @@ marker_var = {'marker_marker_id': bool(0), 'marker_meiotic_pos': bool(0),
 
 where_clause = "cornellnumber==dummy"
 
+#Following if blocks handle the "all" switches
+
 if sample_all == bool(1):
     for variable in sample_var.keys():
         sample_var[variable] = bool(1)
@@ -31,6 +33,8 @@ if genotype_all == bool(1):
 if marker_all == bool(1):
     for variable in marker_var.keys():
         marker_var[variable] = bool(1)   
+
+#Determines which tables are used
 
 usesample = any(sample_var.values())
 usegenotype = any(genotype_var.values())
@@ -51,15 +55,24 @@ ATTRIBUTES = {SAMPLE_TABLE: ['cornellnumber', 'name',
               GENOTYPE_TABLE: ['cornellnumber', 'markername', 'genotype1',
                                'genotype2']}
 
-htmltosql = {'sample_sample_id': ATTRIBUTES[SAMPLE_TABLE][0], 'sample_name': ATTRIBUTES[SAMPLE_TABLE][1],
-             'sample_generation': ATTRIBUTES[SAMPLE_TABLE][2], 'sample_sex': ATTRIBUTES[SAMPLE_TABLE][3],
-             'sample_mother': ATTRIBUTES[SAMPLE_TABLE][4], 'sample_father': ATTRIBUTES[SAMPLE_TABLE][5],
-             'sample_notes': ATTRIBUTES[SAMPLE_TABLE][6], 'genotype_sample_id': ATTRIBUTES[GENOTYPE_TABLE][0],
-             'genotype_marker_id': ATTRIBUTES[GENOTYPE_TABLE][1], 'genotype_genotype1': ATTRIBUTES[GENOTYPE_TABLE][2],
-             'genotype_genotype2': ATTRIBUTES[GENOTYPE_TABLE][3], 'marker_marker_id': ATTRIBUTES[MARKER_TABLE][0],
-             'marker_meiotic_pos': ATTRIBUTES[MARKER_TABLE][1], 'marker_dog_chrom': ATTRIBUTES[MARKER_TABLE][2],
-             'marker_dog_pos': ATTRIBUTES[MARKER_TABLE][3], 'marker_fox_seg': ATTRIBUTES[MARKER_TABLE][4],
-             'marker_fox_chrom': ATTRIBUTES[MARKER_TABLE][5], 'marker_fox_pos': ATTRIBUTES[MARKER_TABLE][6]}
+htmltosql = {'sample_sample_id': ATTRIBUTES[SAMPLE_TABLE][0],
+             'sample_name': ATTRIBUTES[SAMPLE_TABLE][1],
+             'sample_generation': ATTRIBUTES[SAMPLE_TABLE][2],
+             'sample_sex': ATTRIBUTES[SAMPLE_TABLE][3],
+             'sample_mother': ATTRIBUTES[SAMPLE_TABLE][4],
+             'sample_father': ATTRIBUTES[SAMPLE_TABLE][5],
+             'sample_notes': ATTRIBUTES[SAMPLE_TABLE][6],
+             'genotype_sample_id': ATTRIBUTES[GENOTYPE_TABLE][0],
+             'genotype_marker_id': ATTRIBUTES[GENOTYPE_TABLE][1],
+             'genotype_genotype1': ATTRIBUTES[GENOTYPE_TABLE][2],
+             'genotype_genotype2': ATTRIBUTES[GENOTYPE_TABLE][3],
+             'marker_marker_id': ATTRIBUTES[MARKER_TABLE][0],
+             'marker_meiotic_pos': ATTRIBUTES[MARKER_TABLE][1],
+             'marker_dog_chrom': ATTRIBUTES[MARKER_TABLE][2],
+             'marker_dog_pos': ATTRIBUTES[MARKER_TABLE][3],
+             'marker_fox_seg': ATTRIBUTES[MARKER_TABLE][4],
+             'marker_fox_chrom': ATTRIBUTES[MARKER_TABLE][5],
+             'marker_fox_pos': ATTRIBUTES[MARKER_TABLE][6]}
 
 str_types = ['sample_sample_id','sample_name', 'sample_generation',
              'sample_mother', 'sample_father', 'sample_notes',
@@ -67,6 +80,7 @@ str_types = ['sample_sample_id','sample_name', 'sample_generation',
              'marker_meiotic_pos', 'marker_dog_chrom', 'marker_fox_seg',
              'marker_fox_chrom']
 
+#Adds attributes requested for the SELECT clause
 selectquery = "SELECT "
 all_varlists = [sample_var, genotype_var, marker_var]
 for varlist in all_varlists:
@@ -78,7 +92,8 @@ for varlist in all_varlists:
                 selectquery += "'" + htmltosql[varkey] + "'"
             else:
                 selectquery += htmltosql[varkey]
-                
+
+#Adds tables requested for the FROM clause                
 fromquery = " FROM"
 if usesample == bool(1):
     fromquery += " sample_info_clean"
@@ -96,11 +111,13 @@ if usesample == bool(1) and usemarkers == bool(1):
     if usegenotype != bool(1):
         print "ERROR" #How do we actually want to handle this?
 if usesample == bool(1) and usegenotype == bool(1):
-    wherequery += " sample_info_clean.'cornellnumber' = has_genotype.'cornellnumber'"
+    wherequery += (' ' + SAMPLE_TABLE + '.' + ATTRIBUTES[SAMPLE_TABLE][0] +
+                   '=' + GENOTYPE_TABLE + '.' + ATTRIBUTES[GENOTYPE_TABLE][0])
 if usegenotype == bool(1) and usemarkers == bool(1):
-    if wherequery != " WHERE":
+    if wherequery != " WHERE ":
         wherequery += " AND"
-    wherequery += " markers.'markername' = has_genotype.'markername'"
+    wherequery += (' ' + MARKER_TABLE + '.' + ATTRIBUTES[MARKER_TABLE][0] +
+                   '=' + GENOTYPE_TABLE + '.' + ATTRIBUTES[GENOTYPE_TABLE][1])
 if where_clause != "":
     if wherequery != " WHERE":
         wherequery += " AND"

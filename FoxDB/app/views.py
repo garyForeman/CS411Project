@@ -1,4 +1,4 @@
-from flask import render_template, flash, redirect
+from flask import render_template, flash, redirect, Response, url_for, request
 from app import app
 from .forms import InsertSampleForm, UpdateSampleForm, DeleteSampleForm
 from .forms import InsertGenotypeForm, UpdateGenotypeForm, DeleteGenotypeForm
@@ -140,8 +140,23 @@ def query():
     form = QueryForm()
     if form.validate_on_submit():
         #flash(str(type(form.sample_sample_id.data)))
-        return redirect('/query')
+	#Need to add REAL query here
+        g.db_cursor.execute("""SELECT * FROM has_genotype WHERE """ +
+                            """cornellnumber='F03F111';""")
+        data = g.db_cursor.fetchall()
+        data_list = []
+        for row in data:
+            data_list.append(','.join(str(i) for i in row) + '\n')
+        return redirect(url_for('.generate_csv', data=data_list))
     return render_template('query.html', title='Query', form=form)
+
+@app.route('/query/result', methods=['GET', 'POST'])
+def generate_csv():
+    data = request.args.getlist('data')
+    def generate():
+        for row in data:
+            yield row
+    return Response(generate(), mimetype='text')
 
 @app.before_request
 def db_connect():

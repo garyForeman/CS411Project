@@ -6,7 +6,7 @@ from .forms import InsertMarkerForm, UpdateMarkerForm, DeleteMarkerForm
 from .forms import QueryForm
 from flask import g
 from app.SQLfunctions import DB_NAME, DB_HOST, DB_USER, DB_PASSWD
-from app.SQLfunctions import db_insert, db_update, db_delete
+from app.SQLfunctions import db_insert, db_update, db_delete, db_query
 from app.SQLfunctions import SAMPLE_TABLE, GENOTYPE_TABLE, MARKER_TABLE
 import MySQLdb
 
@@ -139,15 +139,50 @@ def delete():
 def query():
     form = QueryForm()
     if form.validate_on_submit():
-        #flash(str(type(form.sample_sample_id.data)))
-	#Need to add REAL query here
-        g.db_cursor.execute("""SELECT * FROM has_genotype WHERE """ +
-                            """cornellnumber='F03F111';""")
-        data = g.db_cursor.fetchall()
-        data_list = []
-        for row in data:
-            data_list.append(','.join(str(i) for i in row) + '\n')
-        return redirect(url_for('.generate_csv', data=data_list))
+        sql_string = db_query([form.sample_all.data,
+                               form.sample_sample_id.data,
+                               form.sample_name.data,
+                               form.sample_generation.data,
+                               form.sample_sex.data,
+                               form.sample_mother.data,
+                               form.sample_father.data,
+                               form.sample_notes.data,
+                               form.genotype_all.data,
+                               form.genotype_sample_id.data,
+                               form.genotype_marker_id.data,
+                               form.genotype_genotype1.data,
+                               form.genotype_genotype2.data,
+                               form.marker_all.data,
+                               form.marker_marker_id.data,
+                               form.marker_meiotic_pos.data,
+                               form.marker_dog_chrom.data,
+                               form.marker_dog_pos.data,
+                               form.marker_fox_seg.data,
+                               form.marker_fox_chrom.data,
+                               form.marker_fox_pos.data],
+                              form.where_clause.data)
+        if sql_string == 1:
+            flash('WARNING: Empty Query')
+            return redirect('/query')
+        elif sql_string == 2:
+            flash('Query disallowed: query for samples and markers separately')
+            return redirect('/query')
+        else:
+            try:
+                #flash(sql_string)
+                #return redirect('/query')
+                g.db_cursor.execute(sql_string)
+                data = g.db_cursor.fetchall()
+                data_list = []
+                for row in data:
+                    data_list.append(','.join(str(i) for i in row) + '\n')
+                def generate():
+                    for row in data_list:
+                        yield row
+                return Response(generate(), mimetype='text')
+            except MySQLdb.ProgrammingError:
+                flash('ERROR: your query contained invalid syntax')
+                return redirect('/query')
     return render_template('query.html', title='Query', form=form)
 
 @app.route('/query/result', methods=['GET', 'POST'])

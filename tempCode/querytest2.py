@@ -28,14 +28,14 @@ where_clause = where_temp
 if sample_all == bool(1):
     for variable in sample_var.keys():
         sample_var[variable] = bool(1)
-        
+
 if genotype_all == bool(1):
     for variable in genotype_var.keys():
         genotype_var[variable] = bool(1)
 
 if marker_all == bool(1):
     for variable in marker_var.keys():
-        marker_var[variable] = bool(1)   
+        marker_var[variable] = bool(1)
 
 usesample = any(sample_var.values())
 usegenotype = any(genotype_var.values())
@@ -80,10 +80,10 @@ htmltosql = {'sample_sample_id': "sample_info_clean." + ATTRIBUTES[SAMPLE_TABLE]
              'marker_fox_chrom': ATTRIBUTES[MARKER_TABLE][5], 'marker_fox_pos': ATTRIBUTES[MARKER_TABLE][6]}
 
 """str_types = ['sample_sample_id','sample_name', 'sample_generation',
-             'sample_mother', 'sample_father', 'sample_notes',
-             'genotype_sample_id', 'genotype_marker_id', 'marker_marker_id',
-             'marker_meiotic_pos', 'marker_dog_chrom', 'marker_fox_seg',
-             'marker_fox_chrom']"""
+'sample_mother', 'sample_father', 'sample_notes',
+'genotype_sample_id', 'genotype_marker_id', 'marker_marker_id',
+'marker_meiotic_pos', 'marker_dog_chrom', 'marker_fox_seg',
+'marker_fox_chrom']"""
 
 selectquery = "SELECT "
 if usesample == bool(1) and usegenotype==bool(1):
@@ -92,7 +92,7 @@ if usesample == bool(1) and usegenotype==bool(1):
 if usemarkers == bool(1) and usegenotype==bool(1):
     genotype_var['genotype_marker_id']=bool(1)
     marker_var['marker_marker_id'] = bool(0)
-    
+
 all_varlists = [sample_var, genotype_var, marker_var]
 for varlist in all_varlists:
     for varkey in varlist.keys():
@@ -100,7 +100,7 @@ for varlist in all_varlists:
             if selectquery != "SELECT ":
                 selectquery += ", "
             selectquery += htmltosql[varkey]
-                
+
 fromquery = " FROM"
 if usesample == bool(1):
     fromquery += " sample_info_clean"
@@ -143,10 +143,10 @@ else:
 
 print query
 """conn = MySQLdb.connect(db=DB_NA ME, host=DB_HOST, passwd=DB_PASSWD,
-                           user=DB_USER)"""
+user=DB_USER)"""
 
 conn = MySQLdb.connect(db="foxdb", host="localhost", passwd="foxdb@CS411",
-                           user="root")
+                       user="root")
 c = conn.cursor()
 
 c.execute(query)
@@ -154,4 +154,3 @@ test=c.fetchone()
 
 conn.commit()
 c.close()
-

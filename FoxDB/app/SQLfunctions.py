@@ -3,6 +3,7 @@
 from flask import flash
 import MySQLdb
 import csv
+import re
 
 
 DB_NAME = 'gforema2$foxdb'
@@ -23,6 +24,121 @@ ATTRIBUTES = {SAMPLE_TABLE: ['cornellnumber', 'name',
               GENOTYPE_TABLE: ['cornellnumber', 'markername', 'genotype1',
                                'genotype2']
 }
+NUM_SAMPLE_COLS = len(ATTRIBUTES[SAMPLE_TABLE])
+NUM_GENOTYPE_COLS = len(ATTRIBUTES[GENOTYPE_TABLE])
+NUM_MARKER_COLS = len(ATTRIBUTES[MARKER_TABLE])
+
+def db_query(attributes, where_clause):
+    """Returns a string containing a SQL query where the SELECT and FROM
+    clauses are determined by the attributes argument and the WHERE clause is
+    given by the where_clause argument."""
+
+    #Strip the where_clause, we'll add these portions later DOESN'T WORK!!!!!
+    where_clause = re.sub('WHERE ', '', where_clause)
+    where_clause = re.sub('where ', '', where_clause)
+    where_clause = re.sub('Where ', '', where_clause)
+    where_clause = where_clause.rstrip(';').replace('\n', ' ').rstrip()
+
+    sample_all = attributes.pop(0)
+    genotype_all = attributes.pop(NUM_SAMPLE_COLS)
+    marker_all = attributes.pop(NUM_SAMPLE_COLS + NUM_GENOTYPE_COLS)
+
+    #Handles the "all" switches"
+    if sample_all:
+        sample_attributes = [True] * NUM_SAMPLE_COLS
+    else:
+        sample_attributes = attributes[:NUM_SAMPLE_COLS]
+    if genotype_all:
+        genotype_attributes = [True] * NUM_GENOTYPE_COLS
+    else:
+        genotype_attributes = attributes[NUM_SAMPLE_COLS:NUM_SAMPLE_COLS +
+                                         NUM_GENOTYPE_COLS]
+    if marker_all:
+        marker_attributes = [True] * NUM_MARKER_COLS
+    else:
+        marker_attributes = attributes[NUM_SAMPLE_COLS + NUM_GENOTYPE_COLS:]
+
+    #Don't use repeated columns
+    if sample_attributes[0]:
+        genotype_attributes[0] = False
+    if marker_attributes[0]:
+        genotype_attributes[1] = False
+
+    #Determines the FROM clause
+    use_sample = any(sample_attributes)
+    use_genotype = any(genotype_attributes)
+    use_marker = any(marker_attributes)
+
+    #Handles an empty query
+    if not use_sample and not use_genotype and not use_marker:
+        return 1
+
+    #Handles an ill advised query
+    if use_sample and not use_genotype and use_marker:
+        return 2
+
+    from_query = " FROM"
+    if use_sample:
+        from_query += ' ' + SAMPLE_TABLE
+    if use_genotype:
+        if from_query != " FROM":
+            from_query += ","
+        from_query += ' ' + GENOTYPE_TABLE
+    if use_marker:
+        if from_query != " FROM":
+            from_query += ","
+        from_query += ' ' + MARKER_TABLE
+
+    #Determines the SELECT clause
+    select_query = "SELECT "
+    if use_sample:
+        for i in xrange(NUM_SAMPLE_COLS):
+            if sample_attributes[i]:
+                select_query += (SAMPLE_TABLE + '.' +
+                                 ATTRIBUTES[SAMPLE_TABLE][i] + ', ')
+    if use_genotype:
+        for i in xrange(NUM_GENOTYPE_COLS):
+            if genotype_attributes[i]:
+                select_query += (GENOTYPE_TABLE + '.' +
+                                 ATTRIBUTES[GENOTYPE_TABLE][i] + ', ')
+    if use_marker:
+        for i in xrange(NUM_MARKER_COLS):
+            if marker_attributes[i]:
+                select_query += (MARKER_TABLE + '.' +
+                                 ATTRIBUTES[MARKER_TABLE][i] + ', ')
+    select_query = select_query.rstrip().rstrip(',')
+
+    #Handles WHERE clause
+    where_query = ""
+    if use_sample and use_genotype:
+        where_query += (' WHERE ' + SAMPLE_TABLE + '.' +
+                        ATTRIBUTES[SAMPLE_TABLE][0] + '=' + GENOTYPE_TABLE +
+                        '.' + ATTRIBUTES[GENOTYPE_TABLE][0])
+    if use_genotype and use_marker:
+        if where_query != '':
+            where_query += " AND"
+        else:
+            where_query += ' WHERE'
+        where_query += (' ' + GENOTYPE_TABLE + '.' +
+                        ATTRIBUTES[GENOTYPE_TABLE][1] + '=' +
+                        MARKER_TABLE + '.' + ATTRIBUTES[MARKER_TABLE][0])
+    if where_clause != '':
+        if where_query != '':
+            where_query += ' AND'
+        else:
+            where_query += ' WHERE'
+        where_query += ' ' + where_clause
+
+    #Handles GROUP BY clause
+    #group_by_query = ''
+    #if use_sample:
+    #    group_by_query = ("GROUP BY " + SAMPLE_TABLE + '.' +
+    #                      ATTRIBUTES[SAMPLE_TABLE][0])
+    #elif use_marker:
+    #    group_by_query = ("GROUP BY " + MARKER_TABLE + '.' +
+    #                      ATTRIBUTES[MARKER_TABLE][0])
+
+    return (select_query + ' ' + from_query + ' ' + where_query + ';')
 
 def db_insert(table, attributes):
     """Function for inserting a new row into table. Note if you ever change
@@ -162,11 +278,11 @@ def import_data(table, csvname):
                   """PRIMARY KEY (""" + ATTRIBUTES[table][0] + """, """ +
                   ATTRIBUTES[table][1] + """),""" +
                   """FOREIGN KEY (""" + ATTRIBUTES[table][0] + """) """ +
-                  """REFERENCES """ + SAMPLE_TABLE + """(""" + 
-                  ATTRIBUTES[SAMPLE_TABLE][0] + 
+                  """REFERENCES """ + SAMPLE_TABLE + """(""" +
+                  ATTRIBUTES[SAMPLE_TABLE][0] +
                   """) ON DELETE CASCADE ON UPDATE CASCADE, """ +
                   """FOREIGN KEY (""" + ATTRIBUTES[table][1] + """) """ +
-                  """REFERENCES """ + MARKER_TABLE + """(""" + 
+                  """REFERENCES """ + MARKER_TABLE + """(""" +
                   ATTRIBUTES[MARKER_TABLE][0] +
                   """) ON DELETE CASCADE ON UPDATE CASCADE);""")
 

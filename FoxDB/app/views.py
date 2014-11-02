@@ -3,10 +3,11 @@ from app import app
 from .forms import InsertSampleForm, UpdateSampleForm, DeleteSampleForm
 from .forms import InsertGenotypeForm, UpdateGenotypeForm, DeleteGenotypeForm
 from .forms import InsertMarkerForm, UpdateMarkerForm, DeleteMarkerForm
-from .forms import QueryForm
+from .forms import QueryForm, PedigreeForm
 from flask import g
 from app.SQLfunctions import DB_NAME, DB_HOST, DB_USER, DB_PASSWD
 from app.SQLfunctions import db_insert, db_update, db_delete, db_query
+from app.SQLfunctions import db_pedigree
 from app.SQLfunctions import SAMPLE_TABLE, GENOTYPE_TABLE, MARKER_TABLE
 import MySQLdb
 
@@ -185,13 +186,29 @@ def query():
                 return redirect('/query')
     return render_template('query.html', title='Query', form=form)
 
-@app.route('/query/result', methods=['GET', 'POST'])
-def generate_csv():
-    data = request.args.getlist('data')
-    def generate():
-        for row in data:
-            yield row
-    return Response(generate(), mimetype='text')
+@app.route('/pedigree', methods=['GET', 'POST'])
+def pedigree():
+    form = PedigreeForm()
+    if form.validate_on_submit():
+        sql_string = db_pedigree([form.marker_id_chr12])
+        if sql_string == 1:
+            flash('ERROR: Please select a marker.')
+            return redirect('/pedigree')
+        else:
+            g.db_cursor.execute(sql_string)
+            marker_data = g.db_cursor.fetchone()
+            marker_id = marker_data[0].replace("'", '')
+            meiotic_pos = marker_data[1].replace("'", '')
+            fox_chr_seg = marker_data[-3].replace("'", '')
+            fox_chr = marker_data[-2].replace("'", '')
+            fox_chr_pos = str(marker_data[-1])
+            return render_template('pedigree.html', title='Pedigree', form=form,
+                                   marker_id=marker_id, meiotic_pos=meiotic_pos,
+                                   fox_chr_seg=fox_chr_seg, fox_chr=fox_chr,
+                                   fox_chr_pos=fox_chr_pos)
+    return render_template('pedigree.html', title='Pedigree', form=form,
+                           marker_id='', meiotic_pos='', fox_chr_seg='',
+                           fox_chr='', fox_chr_pos='')
 
 @app.before_request
 def db_connect():

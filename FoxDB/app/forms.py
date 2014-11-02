@@ -1,6 +1,6 @@
 from flask.ext.wtf import Form
 from wtforms import StringField, TextAreaField, RadioField, IntegerField
-from wtforms import BooleanField
+from wtforms import BooleanField, SelectField
 from wtforms.validators import DataRequired, Length, Optional
 from app.SQLfunctions import SAMPLE_TABLE, GENOTYPE_TABLE, MARKER_TABLE
 from app.SQLfunctions import ATTRIBUTES
@@ -124,3 +124,46 @@ class QueryForm(Form):
                                   default=False)
 
     where_clause = TextAreaField('where_clause')
+
+class PedigreeForm(Form):
+    marker_id_chr12 = SelectField('Marker ID (Chromosome 12)',
+                                  choices=[('', ''),
+                                           ("""'VV1127'""", 'VV1127'),
+                                           ("""'VV1118'""", 'VV1118'),
+                                           ("""'VV1112'""", 'VV1112'),
+                                           ("""'FH2019'""", 'FH2019'),
+                                           ("""'FH3393'""", 'FH3393'),
+                                           ("""'REN245N06'""", 'REN245N06'),
+                                           ("""'CM11.33'""", 'CM11.33'),
+                                           ("""'CM11.27'""", 'CM11.27'),
+                                           ("""'CM11.15'""", 'CM11.15'),
+                                           ("""'CM11.13'""", 'CM11.13'),
+                                           ("""'FH4031'""", 'FH4031'),
+                                           ("""'REN172L08'""", 'REN172L08'),
+                                           ("""'REN94K23'""", 'REN94K23'),
+                                           ("""'REN01G01'""", 'REN01G01'),
+                                           ("""'CM35.13d'""", 'CM35.13d'),
+                                           ("""'CM35.11b'""", 'CM35.11b'),
+                                           ("""'CM35.9a'""", 'CM35.9a'),
+                                           ("""'CM35.7a'""", 'CM35.7a'),
+                                           ("""'CM35.4a'""", 'CM35.4a'),
+                                           ("""'CM5.34'""", 'CM5.34'),
+                                           ("""'CM5.37'""", 'CM5.37'),
+                                           ("""'CM5.41'""", 'CM5.41'),
+                                           ("""'CM5.60'""", 'CM5.60'),
+                                           ("""'CM5.63'""", 'CM5.63'),
+                                           ("""'FH3928'""", 'FH3928'),
+                                           ("""'FH3004'""", 'FH3004'),
+                                           ("""'FH3320'""", 'FH3320'),
+                                           ("""'DTR05.8'""", 'DTR05.8'),
+                                           ("""'CM5.41b'""", 'CM5.41b'),
+                                           ("""'FH3278'""", 'FH3278'),
+                                           ("""'FH3978'""", 'FH3978'),
+                                           ("""'CM5.627'""",  'CM5.627'),
+                                           ("""'REN175P10'""", 'REN175P10'),
+                                           ("""'CM5.701'""", 'CM5.701'),
+                                           ("""'CM5.761'""", 'CM5.761'),
+                                           ("""'FH3089'""", 'FH3089'),
+                                           ("""'CM5.832'""", 'CM5.832'),
+                                           ("""'CM5.894'""", 'CM5.894')],
+                                  validators=[Optional()])

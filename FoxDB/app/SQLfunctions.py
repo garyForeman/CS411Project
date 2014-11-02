@@ -211,6 +211,16 @@ def db_delete(table, key):
         return(sql_string + ATTRIBUTES[table][0] + """='%s' AND """ % key[0] +
                ATTRIBUTES[table][1] + """='%s';""" % key[1])
 
+def db_pedigree(attributes):
+    """Function for generating the query to produce the pedigree tree."""
+
+    if attributes[0].data == '':
+        return 1
+
+    sql_string = ("""SELECT * FROM """ + MARKER_TABLE +
+                  """ WHERE markername=""" + attributes[0].data + """;""")
+    return sql_string
+
 def import_data(table, csvname):
     """Function to declare table and initalize it with values from csvfile"""
 

@@ -1,4 +1,28 @@
 {% extends "base.html" %}
 {% block content %}  
-    <h1>Welcome to FoxDB!</h1>
+<h1 align="center">Welcome to FoxDB!</h1>
+<p style="width:1000px">
+  <img src="http://i.imgur.com/Gk6pO58.jpg" width="200" 
+       style="float:left; margin:0 10px 0 0;">
+  <font size="4.5">
+    In the field of behavioral genetics, it is often necessary to store large quantities of genetic information about individuals. Modern studies routinely rely on the genotyping of thousands upon thousands of single nucleotide polymorphisms (SNPs) or microsatellites. However, in many cases, it is also informative to analyze an individual's genotype in the context of its ancestors and progeny to see how a genotype corresponds to various phenotypes within a segregating pedigree. Typical pedigree-generating software is not designed to display genotype data, and software designed for analysis of SNP and microsatellite data is typically not designed to display this information within a pedigree. It can therefore be difficult for researchers to visualize large numbers of SNPs or microsatellites in a large number of individuals, despite the great value of being able to visually inspect this type of data.<br>
+    <br>
+    Breeding and domestication experiments routinely generate large pedigrees and extensive genotype data across thousands upon thousands of markers or loci. This data can be difficult to manage because the two types of data are intrinsically tied, yet can be difficult to concatenate or visualize with only basic computer skills. Our application integrates pedigree with genotype information to present the user with a graphical interface through which to view a genotype within the context of pedigree. We also implement a function that flags any genotypes that are logically inconsistent within the context of the pedigree based on the laws of inheritance, which is laborious and error-prone if attempted manually. 
+  </font>
+</p>
+<p style="width:1000px">
+  <img src="http://i.imgur.com/qVydqph.jpg" width="200"
+       style="float:left; margin:0 10px 0 0;">
+  <font size="4.5">
+    We are specifically creating an application for use in a lab at University of Illinois where they have collected large amounts of data about a set of farm-bred populations of foxes in Siberia. The farm has been breeding tame, aggressive, and conventional foxes since 1959. Therefore, they have extensive genealogical records ("pedigree data") that include thousands of foxes. Additionally, they have been collecting genetic data about these foxes for a number of years. Traditionally, scientists would identify regions in the genome where there are a number of repetitive bases; these are referred to as microsatellites. The number of repeats can vary among individuals-- so, for example, one fox might have ACTACTACT whereas another would have ACTACT. Recently, it has become feasible to use single nucleotide polymorphisms (SNPs) to check which nucleotide is present at a particular locus within the genome known to carry variation in nucleotides. Most of the <a href="http://ansci.illinois.edu/labs/kukekova-lab">Kukekova Lab</a> data is currently microsatellite data, but they will likely begin collecting more SNP data. Therefore, though we refer to the sites of interest using terminology more common to microsatellite studies ("markers" as opposed to "loci"), we have designed the program to be compatible with both types of data. 
+  </font>
+</p>
+<p style="width:1000px">
+  <img src="http://i.imgur.com/m1VyQVD.jpg" width="200"
+       style="float:left; margin:0 10px 0 0;" align="left">
+  <font size="4.5">
+  Markers are usually selected to space evenly along each chromosome (the fox has 16 autosomes in addition to the sex chromosomes) to allow for the identification of recombination events. This means that markers can be ordered in relation to each other along each chromosome. Additionally, each fox inherits two copies of each microsatellite or SNP: one from its mother, and one from its father. It is not known which copy came from which parent, except potentially through genotype analysis within a pedigree.
+</p>
+  <!--<br>
+  <img src="http://i.imgur.com/TNKE0qL.jpg" width="200">-->
 {% endblock %}

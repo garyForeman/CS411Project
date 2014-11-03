@@ -16,6 +16,8 @@ GENOTYPE_TABLE = 'has_genotype'
 GENOTYPE_FILE = '../../DBinit/genotypesOct19.csv'
 MARKER_TABLE = 'markers'
 MARKER_FILE = '../../DBinit/markersOct19.csv'
+SET207_TABLE = 'SET207'
+SET207_FILE = '../Set207.csv'
 ATTRIBUTES = {SAMPLE_TABLE: ['cornellnumber', 'name',
                              'generationdescription', 'sex_male1',
                              'mother', 'father', 'notes'],
@@ -23,10 +25,14 @@ ATTRIBUTES = {SAMPLE_TABLE: ['cornellnumber', 'name',
                              'FoxChrSeg', 'FoxChr', 'FoxChrPos'],
               GENOTYPE_TABLE: ['cornellnumber', 'markername', 'genotype1',
                                'genotype2']
+              SET206_TABLE: ['cornellnumber', 'pedigree']
+              SET207_TABLE: ['cornellnumber', 'pedigree']
 }
 NUM_SAMPLE_COLS = len(ATTRIBUTES[SAMPLE_TABLE])
 NUM_GENOTYPE_COLS = len(ATTRIBUTES[GENOTYPE_TABLE])
 NUM_MARKER_COLS = len(ATTRIBUTES[MARKER_TABLE])
+NUM_SET206_COLS = len(ATTRIBUTES[SET206_TABLE])
+NUM_SET207_COLS = len(ATTRIBUTES[SET207_TABLE])
 
 def db_query(attributes, where_clause):
     """Returns a string containing a SQL query where the SELECT and FROM
@@ -263,7 +269,7 @@ def import_data(table, csvname):
                   ATTRIBUTES[table][4] + """ VARCHAR(8), """ +
                   ATTRIBUTES[table][5] + """ VARCHAR(8), """ +
                   ATTRIBUTES[table][6] + """ VARCHAR(255));""")
-
+        
         data = list(csv.reader(open(csvname, 'r'), delimiter=','))
 
         for line in data[1:]:
@@ -308,6 +314,22 @@ def import_data(table, csvname):
                       """VALUES({0}, {1}, {2}, {3});"""
                       .format(cornellnumber, markername, genotype1, genotype2))
 
+    elif table.startswith("SET"):
+        c.execute("""CREATE TABLE """ + table + """(""" +
+                  ATTRIBUTES[table][0] + """ VARCHAR(8), """ +
+                  ATTRIBUTES[table][1] + """ VARCHAR(20));""")
+        c.execute(""""ALTER TABLE """ + table + """ ADD PRIMARY KEY (cornellnumber, pedigree)""")
+
+        data = list(csv.reader(open(csvname, 'r'), delimiter=','))
+
+        for line in data[1:]:
+            cornellnumber = "'" + line[0].replace('"', '') + "'"
+            subset = "'" + line[1].replace('"', '') + "'"
+
+            c.execute("""INSERT INTO """ + table + """(cornellnumber, """+
+                      """pedigree) VALUES({0}, {1});"""
+                      .format(cornellnumber, subset))
+
     conn.commit()
     c.close()
     conn.close()
@@ -316,3 +338,5 @@ if __name__ == '__main__':
     import_data(MARKER_TABLE, MARKER_FILE)
     import_data(SAMPLE_TABLE, SAMPLE_FILE)
     import_data(GENOTYPE_TABLE, GENOTYPE_FILE)
+    import_data(SET206_TABLE, SET_FILE)
+    import_data(SET207_TABLE, SET_FILE)

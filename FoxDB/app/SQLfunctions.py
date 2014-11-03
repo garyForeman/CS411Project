@@ -25,8 +25,8 @@ ATTRIBUTES = {SAMPLE_TABLE: ['cornellnumber', 'name',
                              'FoxChrSeg', 'FoxChr', 'FoxChrPos'],
               GENOTYPE_TABLE: ['cornellnumber', 'markername', 'genotype1',
                                'genotype2']
-              SET206_TABLE: ['cornellnumber', 'pedigree']
-              SET207_TABLE: ['cornellnumber', 'pedigree']
+              SET206_TABLE: ['cornellnumber', 'pedigree', 'motherpedigree', 'fatherpedigree'],
+              SET207_TABLE: ['cornellnumber', 'pedigree', 'motherpedigree', 'fatherpedigree']
 }
 NUM_SAMPLE_COLS = len(ATTRIBUTES[SAMPLE_TABLE])
 NUM_GENOTYPE_COLS = len(ATTRIBUTES[GENOTYPE_TABLE])
@@ -317,18 +317,21 @@ def import_data(table, csvname):
     elif table.startswith("SET"):
         c.execute("""CREATE TABLE """ + table + """(""" +
                   ATTRIBUTES[table][0] + """ VARCHAR(8), """ +
-                  ATTRIBUTES[table][1] + """ VARCHAR(20));""")
-        c.execute(""""ALTER TABLE """ + table + """ ADD PRIMARY KEY (cornellnumber, pedigree)""")
+                  ATTRIBUTES[table][1] + """ VARCHAR(20),""" +
+                  ATTRIBUTES[table][2] + """ VARCHAR(20),""" +
+                  ATTRIBUTES[table][3] + """ VARCHAR(20));""")
 
         data = list(csv.reader(open(csvname, 'r'), delimiter=','))
 
         for line in data[1:]:
             cornellnumber = "'" + line[0].replace('"', '') + "'"
-            subset = "'" + line[1].replace('"', '') + "'"
+            pedigree = "'" + line[1].replace('"', '') + "'"
+            motherped = "'" + line[3].replace('"', '') + "'"
+            fatherped = "'" + line[2].replace('"', '') + "'"
 
             c.execute("""INSERT INTO """ + table + """(cornellnumber, """+
-                      """pedigree) VALUES({0}, {1});"""
-                      .format(cornellnumber, subset))
+                      """pedigree, motherpedigree, fatherpedigree) VALUES({0},{1},{2},{3});"""
+                      .format(cornellnumber, pedigree, motherped, fatherped))
 
     conn.commit()
     c.close()

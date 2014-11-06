@@ -16,17 +16,19 @@ GENOTYPE_TABLE = 'has_genotype'
 GENOTYPE_FILE = '../../DBinit/genotypesOct19.csv'
 MARKER_TABLE = 'markers'
 MARKER_FILE = '../../DBinit/markersOct19.csv'
+SET206_TABLE = 'SET206'
+SET206_FILE = '../../DBinit/Set206_gen.csv'
 SET207_TABLE = 'SET207'
-SET207_FILE = '../Set207.csv'
+SET207_FILE = '../../DBinit/Set207_gen.csv'
 ATTRIBUTES = {SAMPLE_TABLE: ['cornellnumber', 'name',
                              'generationdescription', 'sex_male1',
                              'mother', 'father', 'notes'],
               MARKER_TABLE: ['markername', 'MeioticPos', 'DogChr', 'DogPos',
                              'FoxChrSeg', 'FoxChr', 'FoxChrPos'],
               GENOTYPE_TABLE: ['cornellnumber', 'markername', 'genotype1',
-                               'genotype2']
-              SET206_TABLE: ['cornellnumber', 'pedigree', 'motherpedigree', 'fatherpedigree'],
-              SET207_TABLE: ['cornellnumber', 'pedigree', 'motherpedigree', 'fatherpedigree']
+                               'genotype2'],
+              SET206_TABLE: ['cornellnumber', 'pedigree', 'generation'],
+              SET207_TABLE: ['cornellnumber', 'pedigree', 'generation']
 }
 NUM_SAMPLE_COLS = len(ATTRIBUTES[SAMPLE_TABLE])
 NUM_GENOTYPE_COLS = len(ATTRIBUTES[GENOTYPE_TABLE])
@@ -269,7 +271,7 @@ def import_data(table, csvname):
                   ATTRIBUTES[table][4] + """ VARCHAR(8), """ +
                   ATTRIBUTES[table][5] + """ VARCHAR(8), """ +
                   ATTRIBUTES[table][6] + """ VARCHAR(255));""")
-        
+
         data = list(csv.reader(open(csvname, 'r'), delimiter=','))
 
         for line in data[1:]:
@@ -318,28 +320,33 @@ def import_data(table, csvname):
         c.execute("""CREATE TABLE """ + table + """(""" +
                   ATTRIBUTES[table][0] + """ VARCHAR(8), """ +
                   ATTRIBUTES[table][1] + """ VARCHAR(20),""" +
-                  ATTRIBUTES[table][2] + """ VARCHAR(20),""" +
-                  ATTRIBUTES[table][3] + """ VARCHAR(20));""")
+                  ATTRIBUTES[table][2] + """ INT),"""
+                  """PRIMARY KEY(""" + ATTRIBUTES[table][0] + """, """ +
+                  ATTRIBUTES[table][2] + """),""" +
+                  """FOREIGN KEY (""" + ATTRIBUTES[table][0] + """) """ +
+                  """REFERNECES """ + SAMPLE_TABLE + """(""" +
+                  ATTRIBUTES[SAMPLE_TABLE][0] +
+                  """) ON DELETE RESTRICT ON UPDATE CASCADE);""")
 
         data = list(csv.reader(open(csvname, 'r'), delimiter=','))
 
         for line in data[1:]:
-            cornellnumber = "'" + line[0].replace('"', '') + "'"
-            pedigree = "'" + line[1].replace('"', '') + "'"
-            motherped = "'" + line[3].replace('"', '') + "'"
-            fatherped = "'" + line[2].replace('"', '') + "'"
+            cornellnumber = "'" + line[0] + "'"
+            pedigree = "'" + line[1] + "'"
+            generation = line[2]
 
             c.execute("""INSERT INTO """ + table + """(cornellnumber, """+
-                      """pedigree, motherpedigree, fatherpedigree) VALUES({0},{1},{2},{3});"""
-                      .format(cornellnumber, pedigree, motherped, fatherped))
+                      """pedigree, motherpedigree, fatherpedigree) """ +
+                      """VALUES({0},{1},{2});"""
+                      .format(cornellnumber, pedigree, generation))
 
     conn.commit()
     c.close()
     conn.close()
 
 if __name__ == '__main__':
-    import_data(MARKER_TABLE, MARKER_FILE)
-    import_data(SAMPLE_TABLE, SAMPLE_FILE)
-    import_data(GENOTYPE_TABLE, GENOTYPE_FILE)
-    import_data(SET206_TABLE, SET_FILE)
-    import_data(SET207_TABLE, SET_FILE)
+    #import_data(MARKER_TABLE, MARKER_FILE)
+    #import_data(SAMPLE_TABLE, SAMPLE_FILE)
+    #import_data(GENOTYPE_TABLE, GENOTYPE_FILE)
+    import_data(SET206_TABLE, SET206_FILE)
+    import_data(SET207_TABLE, SET207_FILE)

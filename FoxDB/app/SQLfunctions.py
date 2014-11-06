@@ -294,7 +294,7 @@ def import_data(table, csvname):
                   ATTRIBUTES[table][2] + """ INTEGER, """ +
                   ATTRIBUTES[table][3] + """ INTEGER,""" +
                   """PRIMARY KEY (""" + ATTRIBUTES[table][0] + """, """ +
-                  ATTRIBUTES[table][1] + """),""" +
+                  ATTRIBUTES[table][1] + """), """ +
                   """FOREIGN KEY (""" + ATTRIBUTES[table][0] + """) """ +
                   """REFERENCES """ + SAMPLE_TABLE + """(""" +
                   ATTRIBUTES[SAMPLE_TABLE][0] +
@@ -319,12 +319,12 @@ def import_data(table, csvname):
     elif table.startswith("SET"):
         c.execute("""CREATE TABLE """ + table + """(""" +
                   ATTRIBUTES[table][0] + """ VARCHAR(8), """ +
-                  ATTRIBUTES[table][1] + """ VARCHAR(20),""" +
-                  ATTRIBUTES[table][2] + """ INT),"""
-                  """PRIMARY KEY(""" + ATTRIBUTES[table][0] + """, """ +
-                  ATTRIBUTES[table][2] + """),""" +
+                  ATTRIBUTES[table][1] + """ VARCHAR(20), """ +
+                  ATTRIBUTES[table][2] + """ INTEGER, """
+                  """PRIMARY KEY (""" + ATTRIBUTES[table][0] + """, """ +
+                  ATTRIBUTES[table][1] + """), """ +
                   """FOREIGN KEY (""" + ATTRIBUTES[table][0] + """) """ +
-                  """REFERNECES """ + SAMPLE_TABLE + """(""" +
+                  """REFERENCES """ + SAMPLE_TABLE + """(""" +
                   ATTRIBUTES[SAMPLE_TABLE][0] +
                   """) ON DELETE RESTRICT ON UPDATE CASCADE);""")
 
@@ -334,10 +334,11 @@ def import_data(table, csvname):
             cornellnumber = "'" + line[0] + "'"
             pedigree = "'" + line[1] + "'"
             generation = line[2]
+            print cornellnumber, pedigree, generation
 
             c.execute("""INSERT INTO """ + table + """(cornellnumber, """+
-                      """pedigree, motherpedigree, fatherpedigree) """ +
-                      """VALUES({0},{1},{2});"""
+                      """pedigree, generation) """ +
+                      """VALUES({0}, {1}, {2});"""
                       .format(cornellnumber, pedigree, generation))
 
     conn.commit()

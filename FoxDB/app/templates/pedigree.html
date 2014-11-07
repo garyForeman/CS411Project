@@ -4,8 +4,11 @@
   <h2>FoxDB Pedigree (under construction)</h2>
   <form action="" method="post" name="form">
       {{ form.hidden_tag() }}
-	  {{ form.marker_id_chr12.label }}: {{ form.marker_id_chr12 }}
-          (Ordered by chromosome position)
+      <p>{{ form.marker_id_chr12.label }}: {{ form.marker_id_chr12 }}
+	(Ordered by chromosome position)
+      </p>
+      <p>{{ form.pedigree_206.label }}: {{ form.pedigree_206 }}</p>
+      <p>{{ form.pedigree_207.label }}: {{ form.pedigree_207 }}</p>
       <p><input type="submit" value="Submit"></p>
   </form>
   <table>

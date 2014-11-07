@@ -167,3 +167,21 @@ class PedigreeForm(Form):
                                            ("""'CM5.832'""", 'CM5.832'),
                                            ("""'CM5.894'""", 'CM5.894')],
                                   validators=[Optional()])
+
+    choices = [('', '')]
+    for i in xrange(1, 19):
+        pedigree_string = 'ped' + str(i)
+        choices.append(("'" + pedigree_string + "'", pedigree_string))
+    pedigree_206 = SelectField('Pedigree (Group 206)', choices=choices,
+                               validators=[Optional()])
+
+    choices = [('', '')]
+    for i in xrange(19, 27):
+        pedigree_string = 'ped' + str(i)
+        choices.append(("'" + pedigree_string + "'", pedigree_string))
+    choices.append(("""'ped26.5'""", 'ped26.5'))
+    for i in xrange(27, 52):
+        pedigree_string = 'ped' + str(i)
+        choices.append(("'" + pedigree_string + "'", pedigree_string))
+    pedigree_207 = SelectField('Pedigree (Group 207)', choices=choices,
+                               validators=[Optional()])

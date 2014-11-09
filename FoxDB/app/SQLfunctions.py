@@ -6,10 +6,10 @@ import csv
 import re
 
 
-DB_NAME = 'gforema2$foxdb'
-DB_HOST = 'mysql.server'
-DB_USER = 'gforema2'
-DB_PASSWD = 'Genesis411'
+DB_NAME = 'foxdb'
+DB_HOST = 'localhost'
+DB_USER = 'root'
+DB_PASSWD = 'foxdb@CS411'
 SAMPLE_TABLE = 'sample_info_clean'
 SAMPLE_FILE = '../../DBinit/sample_infoOct19.csv'
 GENOTYPE_TABLE = 'has_genotype'
@@ -322,11 +322,11 @@ def import_data(table, csvname):
                   ATTRIBUTES[table][1] + """ VARCHAR(20), """ +
                   ATTRIBUTES[table][2] + """ INTEGER, """
                   """PRIMARY KEY (""" + ATTRIBUTES[table][0] + """, """ +
-                  ATTRIBUTES[table][1] + """), """ +
-                  """FOREIGN KEY (""" + ATTRIBUTES[table][0] + """) """ +
-                  """REFERENCES """ + SAMPLE_TABLE + """(""" +
-                  ATTRIBUTES[SAMPLE_TABLE][0] +
-                  """) ON DELETE RESTRICT ON UPDATE CASCADE);""")
+                  ATTRIBUTES[table][1] + """)); """)
+                  #"""FOREIGN KEY (""" + ATTRIBUTES[table][0] + """) """ +
+                  #"""REFERENCES """ + SAMPLE_TABLE + """(""" +
+                  #ATTRIBUTES[SAMPLE_TABLE][0] +
+                  #""") ON DELETE RESTRICT ON UPDATE CASCADE);""")
 
         data = list(csv.reader(open(csvname, 'r'), delimiter=','))
 

@@ -6,10 +6,10 @@ import csv
 import re
 
 
-DB_NAME = 'foxdb'
-DB_HOST = 'localhost'
-DB_USER = 'root'
-DB_PASSWD = 'foxdb@CS411'
+DB_NAME = 'gforema2$foxdb' #please don't change
+DB_HOST = 'mysql.server'   #please don't change
+DB_USER = 'gforema2'       #please don't change
+DB_PASSWD = 'Genesis411'   #please don't change
 SAMPLE_TABLE = 'sample_info_clean'
 SAMPLE_FILE = '../../DBinit/sample_infoOct19.csv'
 GENOTYPE_TABLE = 'has_genotype'

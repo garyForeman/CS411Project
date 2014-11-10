@@ -5,6 +5,10 @@ from wtforms.validators import DataRequired, Length, Optional
 from app.SQLfunctions import SAMPLE_TABLE, GENOTYPE_TABLE, MARKER_TABLE
 from app.SQLfunctions import ATTRIBUTES
 
+class LoginForm(Form):
+    openid = StringField('openid', validators=[DataRequired()])
+    remember_me = BooleanField('remember_me', default=False)
+    
 class InsertSampleForm(Form):
     sample_id = StringField('sample_id',
                             validators=[DataRequired(), Length(min=1, max=8)])

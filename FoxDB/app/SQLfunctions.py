@@ -13,7 +13,7 @@ DB_PASSWD = 'Genesis411'   #please don't change
 SAMPLE_TABLE = 'sample_info_clean'
 SAMPLE_FILE = '../../DBinit/sample_infoOct19.csv'
 GENOTYPE_TABLE = 'has_genotype'
-GENOTYPE_FILE = '../../DBinit/genotypesOct19.csv'
+GENOTYPE_FILE = '../../DBinit/genotypes_11-9.csv'
 MARKER_TABLE = 'markers'
 MARKER_FILE = '../../DBinit/markersOct19.csv'
 SET206_TABLE = 'SET206'
@@ -334,7 +334,7 @@ def import_data(table, csvname):
             cornellnumber = "'" + line[0] + "'"
             pedigree = "'" + line[1] + "'"
             generation = line[2]
-            print cornellnumber, pedigree, generation
+            #print cornellnumber, pedigree, generation
 
             c.execute("""INSERT INTO """ + table + """(cornellnumber, """+
                       """pedigree, generation) """ +
@@ -348,6 +348,6 @@ def import_data(table, csvname):
 if __name__ == '__main__':
     #import_data(MARKER_TABLE, MARKER_FILE)
     #import_data(SAMPLE_TABLE, SAMPLE_FILE)
-    #import_data(GENOTYPE_TABLE, GENOTYPE_FILE)
-    import_data(SET206_TABLE, SET206_FILE)
-    import_data(SET207_TABLE, SET207_FILE)
+    import_data(GENOTYPE_TABLE, GENOTYPE_FILE)
+    #import_data(SET206_TABLE, SET206_FILE)
+    #import_data(SET207_TABLE, SET207_FILE)

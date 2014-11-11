@@ -11,8 +11,9 @@ from .forms import QueryForm, PedigreeForm
 from flask import g
 from app.SQLfunctions import DB_NAME, DB_HOST, DB_USER, DB_PASSWD
 from app.SQLfunctions import db_insert, db_update, db_delete, db_query
-from app.SQLfunctions import db_pedigree
+from app.SQLfunctions import db_pedigree_marker, db_pedigree_tree
 from app.SQLfunctions import SAMPLE_TABLE, GENOTYPE_TABLE, MARKER_TABLE
+from app.SQLfunctions import SET206_TABLE, SET207_TABLE
 import MySQLdb
 
 #@lm.user_loader
@@ -29,7 +30,7 @@ import MySQLdb
 def index():
 #    user = g.user
     return render_template('index.html', title='Home')
-    
+
 #@app.route('/login', methods=['GET', 'POST'])
 #@oid.loginhandler
 #def login():
@@ -245,7 +246,7 @@ def query():
 def pedigree():
     form = PedigreeForm()
     if form.validate_on_submit():
-        sql_string = db_pedigree([form.marker_id_chr12])
+        sql_string = db_pedigree_marker([form.marker_id_chr12])
         if sql_string == 1:
             flash('ERROR: Please select a marker.')
             return redirect('/pedigree')
@@ -257,13 +258,49 @@ def pedigree():
             fox_chr_seg = marker_data[-3].replace("'", '')
             fox_chr = marker_data[-2].replace("'", '')
             fox_chr_pos = str(marker_data[-1])
+
+            if form.pedigree_206.data != '':
+                sql_string = db_pedigree_tree(SET206_TABLE,
+                                              form.marker_id_chr12.data,
+                                              form.pedigree_206.data)
+            elif form.pedigree_207.data != '':
+                sql_string = db_pedigree_tree(SET207_TABLE,
+                                              form.marker_id_chr12.data,
+                                              form.pedigree_207.data)
+            else:
+                flash('ERROR: Please select a pedigree.')
+                return redirect('/pedigree')
+            flash(sql_string)
+            g.db_cursor.execute(sql_string)
+            data = g.db_cursor.fetchall()
+            children = []
+            for datum in data:
+                if datum[1] == 2 and datum[2] == 2:
+                    mother = datum[0]
+                    maternal_grandmother = datum[3]
+                    maternal_grandfather = datum[4]
+                elif datum[1] == 2 and datum[2] == 1:
+                    father = datum[0]
+                    paternal_grandmother = datum[3]
+                    paternal_grandfather = datum[4]
+                elif datum[1] == 3:
+                    children.append(datum[0])
+                flash(datum)
             return render_template('pedigree.html', title='Pedigree', form=form,
                                    marker_id=marker_id, meiotic_pos=meiotic_pos,
                                    fox_chr_seg=fox_chr_seg, fox_chr=fox_chr,
-                                   fox_chr_pos=fox_chr_pos)
+                                   fox_chr_pos=fox_chr_pos, mother=mother,
+                                   father=father, children=children,
+                                   maternal_grandmother=maternal_grandmother,
+                                   maternal_grandfather=maternal_grandfather,
+                                   paternal_grandmother=paternal_grandmother,
+                                   paternal_grandfather=paternal_grandfather)
     return render_template('pedigree.html', title='Pedigree', form=form,
                            marker_id='', meiotic_pos='', fox_chr_seg='',
-                           fox_chr='', fox_chr_pos='')
+                           fox_chr='', fox_chr_pos='', mother='', father='',
+                           children=[], maternal_grandmother='',
+                           maternal_grandfather='', paternal_grandmother='',
+                           paternal_grandfather='')
 
 @app.before_request
 def db_connect():

@@ -12,10 +12,35 @@
       <p><input type="submit" value="Submit"></p>
   </form>
   <table>
-    <tr><td>Marker ID:</td><td>{{ marker_id }}</td></tr>
-    <tr><td>Meiotic Position:</td><td>{{ meiotic_pos }}</td></tr>
-    <tr><td>Fox Chromosome Segment:</td><td>{{ fox_chr_seg }}</td></tr>
-    <tr><td>Fox Chromosome:</td><td>{{ fox_chr }}</td></tr>
-    <tr><td>Fox Chromosome Position:</td><td>{{ fox_chr_pos }}</td></tr>
+    <tr>
+      <td>Marker ID:</td><td>{{ marker_id }}</td>
+      <td>Maternal Grandmother:</td><td>{{ maternal_grandmother }}</td>
+    </tr>
+    <tr>
+      <td>Meiotic Position:</td><td>{{ meiotic_pos }}</td>
+      <td>Maternal Grandfather:</td><td>{{ maternal_grandfather }}</td>
+    </tr>
+    <tr>
+      <td>Fox Chromosome Segment:</td><td>{{ fox_chr_seg }}</td>
+      <td>Paternal Grandmother:</td><td>{{ paternal_grandmother }}</td>
+    </tr>
+    <tr>
+      <td>Fox Chromosome:</td><td>{{ fox_chr }}</td>
+      <td>Paternal Grandfather:</td><td>{{ paternal_grandfather }}</td>
+    </tr>
+    <tr>
+      <td>Fox Chromosome Position:</td><td>{{ fox_chr_pos }}</td>
+      <td>Mother:</td><td>{{ mother }}</td>
+    </tr>
+    <tr>
+      <td></td><td></td>
+      <td>Father:</td><td>{{ father }}</td>
+    </tr>
+    {% for child in children %}
+    <tr>
+      <td></td><td></td>
+      <td>Child:</td><td>{{ child }}</td>
+    </tr>
+    {% endfor %}
   </table>
 {% endblock %}

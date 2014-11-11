@@ -219,14 +219,37 @@ def db_delete(table, key):
         return(sql_string + ATTRIBUTES[table][0] + """='%s' AND """ % key[0] +
                ATTRIBUTES[table][1] + """='%s';""" % key[1])
 
-def db_pedigree(attributes):
-    """Function for generating the query to produce the pedigree tree."""
+def db_pedigree_marker(attributes):
+    """Function for generating the query to retrieve marker information."""
 
     if attributes[0].data == '':
         return 1
 
     sql_string = ("""SELECT * FROM """ + MARKER_TABLE +
                   """ WHERE markername=""" + attributes[0].data + """;""")
+    return sql_string
+
+def db_pedigree_tree(table, marker, pedigree):
+    """Function for generating the query to create the pedigree tree."""
+
+    sql_string = ("""SELECT """ + table + """.""" +
+                  ATTRIBUTES[table][0] + """, """ +
+                  ATTRIBUTES[table][2] + """, """ +
+                  ATTRIBUTES[SAMPLE_TABLE][3] + """, """ +
+                  ATTRIBUTES[SAMPLE_TABLE][4] + """, """ +
+                  ATTRIBUTES[SAMPLE_TABLE][5] + """, """ +
+                  ATTRIBUTES[GENOTYPE_TABLE][2] + """, """ +
+                  ATTRIBUTES[GENOTYPE_TABLE][3] +
+                  """ FROM """ + table + """ LEFT JOIN """ + SAMPLE_TABLE +
+                  """ ON """ + table + """.""" + ATTRIBUTES[table][0] +
+                  """=""" + SAMPLE_TABLE + """.""" +
+                  ATTRIBUTES[SAMPLE_TABLE][0] + """ LEFT JOIN """ +
+                  GENOTYPE_TABLE + """ ON """ + table + """.""" +
+                  ATTRIBUTES[table][0] + """=""" + GENOTYPE_TABLE + """.""" +
+                  ATTRIBUTES[GENOTYPE_TABLE][0] +
+                  """ WHERE """ + ATTRIBUTES[table][1] + """=""" + pedigree +
+                  """ AND """ + ATTRIBUTES[GENOTYPE_TABLE][1] + """=""" +
+                  marker + """;""")
     return sql_string
 
 def import_data(table, csvname):

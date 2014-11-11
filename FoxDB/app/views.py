@@ -245,6 +245,18 @@ def query():
 @app.route('/pedigree', methods=['GET', 'POST'])
 def pedigree():
     form = PedigreeForm()
+    marker_id=''
+    meiotic_pos=''
+    fox_chr_seg=''
+    fox_chr=''
+    fox_chr_pos=''
+    mother=''
+    father=''
+    children=[]
+    maternal_grandmother=''
+    maternal_grandfather=''
+    paternal_grandmother=''
+    paternal_grandfather=''
     if form.validate_on_submit():
         sql_string = db_pedigree_marker([form.marker_id_chr12])
         if sql_string == 1:
@@ -273,34 +285,44 @@ def pedigree():
             flash(sql_string)
             g.db_cursor.execute(sql_string)
             data = g.db_cursor.fetchall()
-            children = []
+            family_tree = {}
             for datum in data:
                 if datum[1] == 2 and datum[2] == 2:
-                    mother = datum[0]
-                    maternal_grandmother = datum[3]
-                    maternal_grandfather = datum[4]
+                    family_tree[datum[0]] = 'mother'
+                    family_tree[datum[3]] = 'maternal_grandmother'
+                    family_tree[datum[4]] = 'maternal_grandfather'
                 elif datum[1] == 2 and datum[2] == 1:
-                    father = datum[0]
-                    paternal_grandmother = datum[3]
-                    paternal_grandfather = datum[4]
+                    family_tree[datum[0]] = 'father'
+                    family_tree[datum[3]] = 'paternal_grandmother'
+                    family_tree[datum[4]] = 'paternal_grandfather'
                 elif datum[1] == 3:
-                    children.append(datum[0])
-                flash(datum)
-            return render_template('pedigree.html', title='Pedigree', form=form,
-                                   marker_id=marker_id, meiotic_pos=meiotic_pos,
-                                   fox_chr_seg=fox_chr_seg, fox_chr=fox_chr,
-                                   fox_chr_pos=fox_chr_pos, mother=mother,
-                                   father=father, children=children,
-                                   maternal_grandmother=maternal_grandmother,
-                                   maternal_grandfather=maternal_grandfather,
-                                   paternal_grandmother=paternal_grandmother,
-                                   paternal_grandfather=paternal_grandfather)
+                    family_tree[datum[0]] = 'child'
+            for datum in data:
+                family_member = family_tree[datum[0]]
+                if family_member == 'mother':
+                    mother = str(datum)
+                elif family_member == 'father':
+                    father = str(datum)
+                elif family_member == 'maternal_grandmother':
+                    maternal_grandmother = str(datum)
+                elif family_member == 'maternal_grandfather':
+                    maternal_grandfather = str(datum)
+                elif  family_member == 'paternal_grandmother':
+                    paternal_grandmother = str(datum)
+                elif family_member == 'paternal_grandfather':
+                    paternal_grandfather = str(datum)
+                elif family_member == 'child':
+                    children.append(str(datum))
+
     return render_template('pedigree.html', title='Pedigree', form=form,
-                           marker_id='', meiotic_pos='', fox_chr_seg='',
-                           fox_chr='', fox_chr_pos='', mother='', father='',
-                           children=[], maternal_grandmother='',
-                           maternal_grandfather='', paternal_grandmother='',
-                           paternal_grandfather='')
+                           marker_id=marker_id, meiotic_pos=meiotic_pos,
+                           fox_chr_seg=fox_chr_seg, fox_chr=fox_chr,
+                           fox_chr_pos=fox_chr_pos, mother=mother,
+                           father=father, children=children,
+                           maternal_grandmother=maternal_grandmother,
+                           maternal_grandfather=maternal_grandfather,
+                           paternal_grandmother=paternal_grandmother,
+                           paternal_grandfather=paternal_grandfather)
 
 @app.before_request
 def db_connect():

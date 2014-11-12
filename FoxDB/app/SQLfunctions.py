@@ -12,6 +12,8 @@ DB_USER = 'gforema2'       #please don't change
 DB_PASSWD = 'Genesis411'   #please don't change
 SAMPLE_TABLE = 'sample_info_clean'
 SAMPLE_FILE = '../../DBinit/sample_infoOct19.csv'
+#USERS_TABLE = 'users'
+#USERS_FILE = '../../DBinit/Users.csv'
 GENOTYPE_TABLE = 'has_genotype'
 GENOTYPE_FILE = '../../DBinit/genotypes_11-9.csv'
 MARKER_TABLE = 'markers'
@@ -28,6 +30,7 @@ ATTRIBUTES = {SAMPLE_TABLE: ['cornellnumber', 'name',
               GENOTYPE_TABLE: ['cornellnumber', 'markername', 'genotype1',
                                'genotype2'],
               SET206_TABLE: ['cornellnumber', 'pedigree', 'generation'],
+              #USERS_TABLE: ['Username', 'Email_ID']
               SET207_TABLE: ['cornellnumber', 'pedigree', 'generation']
 }
 NUM_SAMPLE_COLS = len(ATTRIBUTES[SAMPLE_TABLE])
@@ -310,6 +313,21 @@ def import_data(table, csvname):
                       "notes) VALUES({0}, {1}, {2}, {3}, {4}, {5}, {6});"
                       .format(cornellnumber, name, generation, sex, mother,
                               father, notes))
+ 
+    #elif table == SAMPLE_TABLE:
+    #    c.execute("""CREATE TABLE """ + table + """(""" +
+    #              ATTRIBUTES[table][0] + """ VARCHAR(20) PRIMARY KEY, """ +
+    #              ATTRIBUTES[table][1] + """ VARCHAR(20));""")
+
+    #    data = list(csv.reader(open(csvname, 'r'), delimiter=','))
+
+    #    for line in data[1:]:
+    #        Username = "'" + line[0].replace('"', '') + "'"
+    #        Email_ID = "'" + line[1].replace('"', '') + "'"
+    #        c.execute("INSERT INTO users(Username, Email_ID) " +
+    #                  " VALUES({0}, {1});"
+    #                  .format(Username, Email_ID))
+
     elif table == GENOTYPE_TABLE:
         c.execute("""CREATE TABLE """ + table + """(""" +
                   ATTRIBUTES[table][0] + """ VARCHAR(8), """+
@@ -371,6 +389,7 @@ def import_data(table, csvname):
 if __name__ == '__main__':
     #import_data(MARKER_TABLE, MARKER_FILE)
     #import_data(SAMPLE_TABLE, SAMPLE_FILE)
+    #import_data(USERS_TABLE, USERS_FILE)
     import_data(GENOTYPE_TABLE, GENOTYPE_FILE)
     #import_data(SET206_TABLE, SET206_FILE)
     #import_data(SET207_TABLE, SET207_FILE)

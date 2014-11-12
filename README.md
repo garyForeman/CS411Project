@@ -1,8 +1,8 @@
 CS411Project
 ============
 
-Authors: Gary Foreman and Halie Rando  
-email: gforema2@illinois.edu, rando2@illinois.edu  
+Authors: Gary Foreman, Halie Rando, and Kavya Kannan  
+email: gforema2@illinois.edu, rando2@illinois.edu, kkannan2@illinois.edu  
 [FoxDB website](http://gforema2.pythonanywhere.com/)  
 
 Description

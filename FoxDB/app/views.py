@@ -3,7 +3,6 @@ from app import app#, lm, oid
 #from flask.ext.login import login_user, logout_user, current_user,
 #from flask.ext.login import login_required
 #from .forms import LoginForm
-#from .models import User
 from .forms import InsertSampleForm, UpdateSampleForm, DeleteSampleForm
 from .forms import InsertGenotypeForm, UpdateGenotypeForm, DeleteGenotypeForm
 from .forms import InsertMarkerForm, UpdateMarkerForm, DeleteMarkerForm
@@ -12,13 +11,15 @@ from flask import g
 from app.SQLfunctions import DB_NAME, DB_HOST, DB_USER, DB_PASSWD
 from app.SQLfunctions import db_insert, db_update, db_delete, db_query
 from app.SQLfunctions import db_pedigree_marker, db_pedigree_tree
-from app.SQLfunctions import SAMPLE_TABLE, GENOTYPE_TABLE, MARKER_TABLE
+from app.SQLfunctions import SAMPLE_TABLE, GENOTYPE_TABLE, MARKER_TABLE#, USERS_TABLE
 from app.SQLfunctions import SET206_TABLE, SET207_TABLE
 import MySQLdb
 
 #@lm.user_loader
-#def load_user(id):
-#    return User.query.get(int(id))
+#def load_user():
+#    g.db_cursor.execute("""SELECT Users FROM USERS_TABLE) 
+#    user = g.db_cursor.fetchall()
+#    return user
 
 
 #@app.before_request
@@ -28,7 +29,7 @@ import MySQLdb
 @app.route('/')
 @app.route('/index')
 def index():
-#    user = g.user
+    #user = g.user
     return render_template('index.html', title='Home')
 
 #@app.route('/login', methods=['GET', 'POST'])
@@ -39,7 +40,7 @@ def index():
 #    form = LoginForm()
 #    if form.validate_on_submit():
 #        session['remember_me'] = form.remember_me.data
-#        return oid.try_login(form.openid.data, ask_for=['nickname', 'email'])
+#        return oid.try_login(form.openid.data, ask_for=['username', 'email'])
 #    return render_template('login.html',
 #                           title='Sign In',
 #                           form=form,
@@ -53,12 +54,9 @@ def index():
 #        return redirect(url_for('login'))
 #    user = User.query.filter_by(email=resp.email).first()
 #    if user is None:
-#        nickname = resp.nickname
-#        if nickname is None or nickname == "":
-#            nickname = resp.email.split('@')[0]
-#        user = User(nickname=nickname, email=resp.email)
-#        db.session.add(user)
-#        db.session.commit()
+#        flash('You do not have login permission')
+#        return redirect(url_for('index'))
+#        
 #    remember_me = False
 #    if 'remember_me' in session:
 #        remember_me = session['remember_me']

@@ -30,7 +30,7 @@ ATTRIBUTES = {SAMPLE_TABLE: ['cornellnumber', 'name',
               GENOTYPE_TABLE: ['cornellnumber', 'markername', 'genotype1',
                                'genotype2'],
               SET206_TABLE: ['cornellnumber', 'pedigree', 'generation'],
-              #USERS_TABLE: ['Username', 'Email_ID']
+              #USERS_TABLE: ['email']
               SET207_TABLE: ['cornellnumber', 'pedigree', 'generation']
 }
 NUM_SAMPLE_COLS = len(ATTRIBUTES[SAMPLE_TABLE])
@@ -39,12 +39,17 @@ NUM_MARKER_COLS = len(ATTRIBUTES[MARKER_TABLE])
 NUM_SET206_COLS = len(ATTRIBUTES[SET206_TABLE])
 NUM_SET207_COLS = len(ATTRIBUTES[SET207_TABLE])
 
+def db_login(email):
+    email = "'" + email + "'"
+    return ("""SELECT email FROM """ + USERS_TABLE + """WHERE email=""" +
+            email + """;""")
+
 def db_query(attributes, where_clause):
     """Returns a string containing a SQL query where the SELECT and FROM
     clauses are determined by the attributes argument and the WHERE clause is
     given by the where_clause argument."""
 
-    #Strip the where_clause, we'll add these portions later DOESN'T WORK!!!!!
+    #Strip the where_clause, we'll add these portions later
     where_clause = re.sub('WHERE ', '', where_clause)
     where_clause = re.sub('where ', '', where_clause)
     where_clause = re.sub('Where ', '', where_clause)
@@ -314,19 +319,15 @@ def import_data(table, csvname):
                       .format(cornellnumber, name, generation, sex, mother,
                               father, notes))
  
-    #elif table == SAMPLE_TABLE:
-    #    c.execute("""CREATE TABLE """ + table + """(""" +
-    #              ATTRIBUTES[table][0] + """ VARCHAR(20) PRIMARY KEY, """ +
-    #              ATTRIBUTES[table][1] + """ VARCHAR(20));""")
+    elif table == USERS_TABLE:
+        c.execute("""CREATE TABLE """ + table + """(""" +
+                  ATTRIBUTES[table][0] + """ VARCHAR(20) PRIMARY KEY);""")
 
-    #    data = list(csv.reader(open(csvname, 'r'), delimiter=','))
-
-    #    for line in data[1:]:
-    #        Username = "'" + line[0].replace('"', '') + "'"
-    #        Email_ID = "'" + line[1].replace('"', '') + "'"
-    #        c.execute("INSERT INTO users(Username, Email_ID) " +
-    #                  " VALUES({0}, {1});"
-    #                  .format(Username, Email_ID))
+        data = list(csv.reader(open(csvname, 'r'), delimiter=','))
+        for line in data[1:]:
+            email = "'" + line[0].replace('"', '') + "'"
+            c.execute("INSERT INTO users(email) " +
+                      "VALUES({0});".format((email))
 
     elif table == GENOTYPE_TABLE:
         c.execute("""CREATE TABLE """ + table + """(""" +
@@ -390,6 +391,6 @@ if __name__ == '__main__':
     #import_data(MARKER_TABLE, MARKER_FILE)
     #import_data(SAMPLE_TABLE, SAMPLE_FILE)
     #import_data(USERS_TABLE, USERS_FILE)
-    import_data(GENOTYPE_TABLE, GENOTYPE_FILE)
+    #import_data(GENOTYPE_TABLE, GENOTYPE_FILE)
     #import_data(SET206_TABLE, SET206_FILE)
     #import_data(SET207_TABLE, SET207_FILE)

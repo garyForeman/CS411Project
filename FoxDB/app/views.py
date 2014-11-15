@@ -1,6 +1,6 @@
 from flask import render_template, flash, redirect, Response, url_for, request
 from app import app#, lm, oid
-#from flask.ext.login import login_user, logout_user, current_user,
+#from flask.ext.login import login_user, logout_user, current_user
 #from flask.ext.login import login_required
 #from .forms import LoginForm
 from .forms import InsertSampleForm, UpdateSampleForm, DeleteSampleForm
@@ -10,21 +10,23 @@ from .forms import QueryForm, PedigreeForm
 from flask import g
 from app.SQLfunctions import DB_NAME, DB_HOST, DB_USER, DB_PASSWD
 from app.SQLfunctions import db_insert, db_update, db_delete, db_query
-from app.SQLfunctions import db_pedigree_marker, db_pedigree_tree
-from app.SQLfunctions import SAMPLE_TABLE, GENOTYPE_TABLE, MARKER_TABLE#, USERS_TABLE
+from app.SQLfunctions import db_pedigree_marker, db_pedigree_tree#, db_login
+from app.SQLfunctions import SAMPLE_TABLE, GENOTYPE_TABLE, MARKER_TABLE
+#from app.SQLfunctions import USERS_TABLE
 from app.SQLfunctions import SET206_TABLE, SET207_TABLE
 import MySQLdb
 
 #@lm.user_loader
-#def load_user():
-#    g.db_cursor.execute("""SELECT Users FROM USERS_TABLE) 
-#    user = g.db_cursor.fetchall()
+#def load_user(email):
+#    sql_string = db_login(email)
+#    g.db_cursor.execute(sql_string) 
+#    db_email = g.db_cursor.fetchone()
+#    try:
+#        db_email = db_email[0]
+#        user = User(db_email)
+#    escept IndexError:
+#        user = None
 #    return user
-
-
-#@app.before_request
-#def before_request():
-#    g.user = current_user
 
 @app.route('/')
 @app.route('/index')
@@ -39,8 +41,8 @@ def index():
 #        return redirect(url_for('index'))
 #    form = LoginForm()
 #    if form.validate_on_submit():
-#        session['remember_me'] = form.remember_me.data
-#        return oid.try_login(form.openid.data, ask_for=['username', 'email'])
+#        #session['remember_me'] = form.remember_me.data
+#        return oid.try_login(form.openid.data, ask_for=['email'])
 #    return render_template('login.html',
 #                           title='Sign In',
 #                           form=form,
@@ -52,16 +54,23 @@ def index():
 #    if resp.email is None or resp.email == "":
 #        flash('Invalid login. Please try again.')
 #        return redirect(url_for('login'))
-#    user = User.query.filter_by(email=resp.email).first()
+#    sql_string = db_login(resp.email)
+#    g.db_cursor.execute(sql_string)
+#    email = g.db_cursor.fetchone()
+#    try:
+#        email = email[0]
+#        user = User(email)
+#    except IndexError:
+#        user = None
 #    if user is None:
 #        flash('You do not have login permission')
 #        return redirect(url_for('index'))
 #        
-#    remember_me = False
-#    if 'remember_me' in session:
-#        remember_me = session['remember_me']
-#        session.pop('remember_me', None)
-#    login_user(user, remember=remember_me)
+#    #remember_me = False
+#    #if 'remember_me' in session:
+#    #    remember_me = session['remember_me']
+#    #    session.pop('remember_me', None)
+#    login_user(user)#, remember=remember_me)
 #    return redirect(request.args.get('next') or url_for('index'))
 
 
@@ -71,6 +80,7 @@ def index():
 #    return redirect(url_for('index'))
 
 @app.route('/insert', methods=['GET', 'POST'])
+#@login_required
 def insert():
     sample_form = InsertSampleForm(prefix='sample_form')
     genotype_form = InsertGenotypeForm(prefix='genotype_form')
@@ -121,6 +131,7 @@ def insert():
                            genotype_form=genotype_form)
 
 @app.route('/update', methods=['GET', 'POST'])
+#@login_required
 def update():
     sample_form = UpdateSampleForm(prefix='sample_form')
     genotype_form = UpdateGenotypeForm(prefix='genotype_form')
@@ -166,6 +177,7 @@ def update():
                            genotype_form=genotype_form)
 
 @app.route('/delete', methods=['GET', 'POST'])
+#@login_required
 def delete():
     sample_form = DeleteSampleForm(prefix='sample_form')
     genotype_form = DeleteGenotypeForm(prefex='genotype_form')
@@ -323,7 +335,8 @@ def pedigree():
                            paternal_grandfather=paternal_grandfather)
 
 @app.before_request
-def db_connect():
+def before_request():
+#    g.user = current_user
     g.db_conn = MySQLdb.connect(db=DB_NAME, host=DB_HOST, passwd=DB_PASSWD,
                                 user=DB_USER)
     g.db_cursor = g.db_conn.cursor()

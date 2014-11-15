@@ -80,7 +80,7 @@ def index():
 #    return redirect(url_for('index'))
 
 @app.route('/insert', methods=['GET', 'POST'])
-#@login_required
+@login_required
 def insert():
     sample_form = InsertSampleForm(prefix='sample_form')
     genotype_form = InsertGenotypeForm(prefix='genotype_form')
@@ -131,7 +131,7 @@ def insert():
                            genotype_form=genotype_form)
 
 @app.route('/update', methods=['GET', 'POST'])
-#@login_required
+@login_required
 def update():
     sample_form = UpdateSampleForm(prefix='sample_form')
     genotype_form = UpdateGenotypeForm(prefix='genotype_form')
@@ -177,7 +177,7 @@ def update():
                            genotype_form=genotype_form)
 
 @app.route('/delete', methods=['GET', 'POST'])
-#@login_required
+@login_required
 def delete():
     sample_form = DeleteSampleForm(prefix='sample_form')
     genotype_form = DeleteGenotypeForm(prefex='genotype_form')

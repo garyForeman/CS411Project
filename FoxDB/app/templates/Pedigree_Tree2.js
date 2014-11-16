@@ -13,7 +13,7 @@ console.log(rawpatGM);
 console.log(rawpatGF);
 console.log(rawmother);
 console.log(rawfather);
-//console.log(rawchildren);
+console.log(rawchildren);
 
 // var ex = "(asdfasf asdfasdf)";
 // var ex1 = ex.replace('(','').replace(')','');

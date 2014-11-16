@@ -1,20 +1,53 @@
-console.log("inside js")
-// var rawMatGM = d3.select("#MaternalGM")
-// console.log(rawMatGM);
-//var matGM = ['F05F506', 1, 2, 'NULL', 'NULL', 369, 375];
-var matGM = null;
-var matGF = ['F05F437', 1, 1, 'NULL', 'NULL', 371, 371];
-//var matGF = null;
-var patGM = ['F05F590', 1, 2, 'NULL', 'NULL', 375, 375];
-var patGF = ['F05F439', 1, 1, 'NULL', 'NULL', 367, 375];
-var mother = ['F05F311', 2, 2, 'F05F506', 'F05F437', 369, 371];
-var father = ['F05F563', 2, 1, 'F05F590', 'F05F439', 0, 0];
-var children = [['F06F849', 3, 2, 'F05F311', 'F05F563', 371, 375]
-,['F06F850', 3, 1, 'F05F311', 'F05F563', 371, 375]
-,['F06F851', 3, 2, 'F05F311', 'F05F563', 371, 375]
-,['F06F852', 3, 1, 'F05F311', 'F05F563', 371, 375]
-,['F06F853', 3, 1, 'F05F311', 'F05F563', 369, 375]
-,['F06F854', 3, 2, 'F05F311', 'F05F563', 369, 375]];
+var rawmatGM = d3.select("#MaternalGM").text().replace('(','').replace(')','');
+var rawmatGF = d3.select("#MaternalGF").text().replace('(','').replace(')','');
+var rawpatGM = d3.select("#PaternalGM").text().replace('(','').replace(')','');
+var rawpatGF = d3.select("#PaternalGF").text().replace('(','').replace(')','');
+var rawmother = d3.select("#Mother").text().replace('(','').replace(')','');
+var rawfather = d3.select("#Father").text().replace('(','').replace(')','');
+var rawchildren = d3.select("#Children").text().replace('[','').replace(']','');
+
+
+console.log(rawmatGM);
+console.log(rawmatGF);
+console.log(rawpatGM);
+console.log(rawpatGF);
+console.log(rawmother);
+console.log(rawfather);
+//console.log(rawchildren);
+
+// var ex = "(asdfasf asdfasdf)";
+// var ex1 = ex.replace('(','').replace(')','');
+// console.log(ex1);
+
+var matGM = rawmatGM.split(", ");
+var matGF = rawmatGF.split(", ");
+var patGM = rawpatGM.split(", ");
+var patGF = rawpatGF.split(", ");
+var mother = rawmother.split(", ");
+var father = rawfather.split(", ");
+var unprocessed_children = rawchildren.split(",");
+var children = [];
+for(i=0; i< unprocessed_children.length; i++){
+	children.push(child.replace('(','').replace(')','').split(","));
+}
+
+
+
+// var matGM = ['F05F506', 1, 2, 'NULL', 'NULL', 369, 375];
+// var matGF = ['F05F437', 1, 1, 'NULL', 'NULL', 371, 371];
+// var patGM = ['F05F590', 1, 2, 'NULL', 'NULL', 375, 375];
+// var patGF = ['F05F439', 1, 1, 'NULL', 'NULL', 367, 375];
+// var mother = ['F05F311', 2, 2, 'F05F506', 'F05F437', 369, 371];
+// var father = ['F05F563', 2, 1, 'F05F590', 'F05F439', 0, 0];
+
+// var children = [['F06F849', 3, 2, 'F05F311', 'F05F563', 371, 375]
+// ,['F06F850', 3, 1, 'F05F311', 'F05F563', 371, 375]
+// ,['F06F851', 3, 2, 'F05F311', 'F05F563', 371, 375]
+// ,['F06F852', 3, 1, 'F05F311', 'F05F563', 371, 375]
+// ,['F06F853', 3, 1, 'F05F311', 'F05F563', 369, 375]
+// ,['F06F854', 3, 2, 'F05F311', 'F05F563', 369, 375]];
+
+
 
 
 var genThreeCount = children.length;
@@ -291,6 +324,3 @@ for(i=0; i<children.length; i++){
                 .attr('fill', 'black')
                 .style("text-anchor", "middle");
 }
-
-
-

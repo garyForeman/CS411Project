@@ -1,8 +1,8 @@
 CS411Project
 ============
 
-Authors: Gary Foreman, Halie Rando, and Kavya Kannan  
-email: gforema2@illinois.edu, rando2@illinois.edu, kkannan2@illinois.edu  
+Authors: Gary Foreman, Halie Rando, Kavya Kannan, and Assma Boughoula  
+email: gforema2@illinois.edu, rando2@illinois.edu, kkannan2@illinois.edu, boughou1@illinois.edu  
 [FoxDB website](http://gforema2.pythonanywhere.com/)  
 
 Description
@@ -13,7 +13,7 @@ Web application that integrates genotype data with pedigree records to allow res
 Current Functionality
 ---------------------
 
-Ability to query the database and insert, update, and delete tuples from database tables through the web-based frontend.
+Ability to query the database and insert, update, and delete tuples from database tables through the web-based frontend. Visualization of pedigree trees and genotype inheritance. 
 
 Directory Layout
 ----------------

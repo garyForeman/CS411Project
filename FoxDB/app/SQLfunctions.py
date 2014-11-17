@@ -12,8 +12,8 @@ DB_USER = 'gforema2'       #please don't change
 DB_PASSWD = 'Genesis411'   #please don't change
 SAMPLE_TABLE = 'sample_info_clean'
 SAMPLE_FILE = '../../DBinit/sample_infoOct19.csv'
-#USERS_TABLE = 'users'
-#USERS_FILE = '../../DBinit/Users.csv'
+USERS_TABLE = 'users'
+USERS_FILE = '../../DBinit/Users.csv'
 GENOTYPE_TABLE = 'has_genotype'
 GENOTYPE_FILE = '../../DBinit/genotypes_11-9.csv'
 MARKER_TABLE = 'markers'
@@ -30,7 +30,7 @@ ATTRIBUTES = {SAMPLE_TABLE: ['cornellnumber', 'name',
               GENOTYPE_TABLE: ['cornellnumber', 'markername', 'genotype1',
                                'genotype2'],
               SET206_TABLE: ['cornellnumber', 'pedigree', 'generation'],
-              #USERS_TABLE: ['email']
+              USERS_TABLE: ['email'],
               SET207_TABLE: ['cornellnumber', 'pedigree', 'generation']
 }
 NUM_SAMPLE_COLS = len(ATTRIBUTES[SAMPLE_TABLE])
@@ -256,8 +256,9 @@ def db_pedigree_tree(table, marker, pedigree):
                   ATTRIBUTES[table][0] + """=""" + GENOTYPE_TABLE + """.""" +
                   ATTRIBUTES[GENOTYPE_TABLE][0] +
                   """ WHERE """ + ATTRIBUTES[table][1] + """=""" + pedigree +
-                  """ AND """ + ATTRIBUTES[GENOTYPE_TABLE][1] + """=""" +
-                  marker + """;""")
+                  """ AND (""" + ATTRIBUTES[GENOTYPE_TABLE][1] + """=""" +
+                  marker + """ OR """ + ATTRIBUTES[GENOTYPE_TABLE][1] + 
+                  """ IS NULL);""")
     return sql_string
 
 def import_data(table, csvname):
@@ -321,13 +322,13 @@ def import_data(table, csvname):
  
     elif table == USERS_TABLE:
         c.execute("""CREATE TABLE """ + table + """(""" +
-                  ATTRIBUTES[table][0] + """ VARCHAR(20) PRIMARY KEY);""")
+                  ATTRIBUTES[table][0] + """ VARCHAR(50) PRIMARY KEY);""")
 
         data = list(csv.reader(open(csvname, 'r'), delimiter=','))
         for line in data[1:]:
-            email = "'" + line[0].replace('"', '') + "'"
+            email = "'" + line[1].replace('"', '') + "'"
             c.execute("INSERT INTO users(email) " +
-                      "VALUES({0});".format((email))
+                      "VALUES({0});".format((email)))
 
     elif table == GENOTYPE_TABLE:
         c.execute("""CREATE TABLE """ + table + """(""" +
@@ -390,7 +391,7 @@ def import_data(table, csvname):
 if __name__ == '__main__':
     #import_data(MARKER_TABLE, MARKER_FILE)
     #import_data(SAMPLE_TABLE, SAMPLE_FILE)
-    #import_data(USERS_TABLE, USERS_FILE)
+    import_data(USERS_TABLE, USERS_FILE)
     #import_data(GENOTYPE_TABLE, GENOTYPE_FILE)
     #import_data(SET206_TABLE, SET206_FILE)
     #import_data(SET207_TABLE, SET207_FILE)

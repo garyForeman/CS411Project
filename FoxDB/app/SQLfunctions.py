@@ -391,7 +391,7 @@ def import_data(table, csvname):
 if __name__ == '__main__':
     #import_data(MARKER_TABLE, MARKER_FILE)
     #import_data(SAMPLE_TABLE, SAMPLE_FILE)
-    import_data(USERS_TABLE, USERS_FILE)
+    #import_data(USERS_TABLE, USERS_FILE)
     #import_data(GENOTYPE_TABLE, GENOTYPE_FILE)
     #import_data(SET206_TABLE, SET206_FILE)
-    #import_data(SET207_TABLE, SET207_FILE)
+    import_data(SET207_TABLE, SET207_FILE)

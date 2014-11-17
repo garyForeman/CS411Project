@@ -69,8 +69,8 @@ def addtoquest(CN, marker, checkedagainst,setname, ped):
                       .format(CN, marker, checkedagainst, setname, ped))
 
 def checkgen(genotype_target, possible_inheritance, elders, target_CN, marker, setname, ped, genotypedict):
-    if '0' not in genotype_target:
-        if genotype_target[0] in possible_inheritance.keys() and genotype_target[1] in possible_inheritance.keys():#both gen_p in gen_gp
+    if '0' not in genotype_target: #if the genotype of the target sample has 2 known values
+        if genotype_target[0] in possible_inheritance.keys() and genotype_target[1] in possible_inheritance.keys():#both alleles found in parents
             if genotype_target[0]==genotype_target[1] and len(possible_inheritance[genotype_target[0]])==2:#normal homozygote, both parents have it
                 c.execute("INSERT INTO consistent_parents VALUES('{0}','{1}','{2}','{3}')".format(target_CN, marker, setname, ped))
                 c.execute("INSERT INTO consistent_offspring VALUES('{0}','{1}','{2}','{3}','{4}')".format(elders[0], marker, setname, ped, target_CN))
@@ -105,25 +105,10 @@ def checkgen(genotype_target, possible_inheritance, elders, target_CN, marker, s
         addtoquest(target_CN, marker, 'offspring', setname, ped) #have no idea whether it's right or wrong
         addtoquest(target_CN, marker, 'parent', setname, ped) #have no idea whether it's right or wrong
         
-    else: #if only one is '0'
-        realgen = 0
-        for genotype in target_genotype:
-            if genotype == '0':
-                continue
-            else:
-                realgen = genotype
-        if realgen in genotypedict[elders[0]]: 
-            c.execute("INSERT INTO consistent_parents VALUES('{0}','{1}','{2}','{3}')".format(target_CN, marker, setname, ped))
-            c.execute("INSERT INTO consistent_offspring VALUES('{0}','{1}','{2}','{3}','{4}')".format(elders[0], marker, setname, ped, target_CN))
-            addtoquest(elders[1], marker, 'offspring', setname, ped) #have no idea whether it's right or wrong
-        elif realgen in genotypedict[elders[1]]:
-            c.execute("INSERT INTO consistent_parents VALUES('{0}','{1}','{2}','{3}')".format(target_CN, marker, setname, ped))
-            c.execute("INSERT INTO consistent_offspring VALUES('{0}','{1}','{2}','{3}','{4}')".format(elders[1], marker, setname, ped, target_CN))
-            addtoquest(elders[0], marker, 'offspring', setname, ped) #have no idea whether it's right or wrong
-        else:
-            addtoquest(target_CN, marker, 'parent', setname, ped) #have no idea whether it's right or wrong
-            addtoquest(elders[0], marker, 'offspring', setname, ped) #have no idea whether it's right or wrong
-            addtoquest(elders[1], marker, 'offspring', setname, ped) #have no idea whether it's right or wrong
+    else: #if exactly one allele of target_genotype is '0' -> Jen wants to hand-validate these
+        addtoquest(target_CN, marker, 'parent', setname, ped) #have no idea whether it's right or wrong
+        addtoquest(elders[0], marker, 'offspring', setname, ped) #have no idea whether it's right or wrong
+        addtoquest(elders[1], marker, 'offspring', setname, ped) #have no idea whether it's right or wrong
 
 
             
@@ -150,11 +135,11 @@ for setname in allsets: #set by set
         samples_III = unfetchall_single(c.fetchall())
         
         for marker in allmarkers:
-            I_genotypes = {}
-            II_genotypes = {}
+            I_genotypes = {}#dict of genotypes for each gen I (Key: grandparent cornellnumber, value: list of alleles)
+            II_genotypes = {} #dict of genotypes for each gen II (Key: parent cornellnumber, value: list of alleles)
             
-            possible_inheritance_p={}
-            for CN_p in samples_II:
+            possible_inheritance_p={} #all alleles in generation II (Key: allele, value: list of parents with that allele)
+            for CN_p in samples_II: #cornellnumber of each parent
                 c.execute("""SELECT genotype1, genotype2 FROM has_genotype WHERE """+
                           """cornellnumber ='{0}' AND markername='{1}';"""
                           .format(CN_p, marker))
@@ -172,7 +157,7 @@ for setname in allsets: #set by set
                     elif possible_inheritance_p[gen]!= [CN_p]:
                         possible_inheritance_p[gen].append(CN_p)
                 
-                possible_inheritance_gp= {}
+                possible_inheritance_gp= {}#all alleles in generation I (Key: allele, value: list of grandparents with that allele)
                 c.execute("SELECT mother, father FROM sample_info_clean WHERE cornellnumber='{0}'"
                           .format(CN_p))
                 grandparents = unfetchone_multi(c.fetchall())

@@ -36,7 +36,7 @@ def init(c):
     alltables = []
     for table in tables:
         alltables.append('\t'.join([str(i) for i in table]))
-    print alltables
+
     if "questionable" in alltables:
         c.execute("DROP TABLE IF EXISTS questionable;")
     c.execute("""CREATE TABLE IF NOT EXISTS questionable(cornellnumber VARCHAR(15), """+
@@ -83,15 +83,21 @@ def checkgen(genotype_target, possible_inheritance, elders, target_CN, marker, s
                 
         elif '0' in possible_inheritance.keys(): #if one or more parent does not have it
             if len(possible_inheritance['0'])==1:
-                canskip = possible_inheritance['0'] #CN of the one that gets a pass
+                canskip = possible_inheritance['0'][0] #CN of the one that gets a pass, Gary's change added
                 for elder in elders:
-                    if elder == canskip:
+                    if elder == canskip: 
                         addtoquest(elder, marker, 'offspring', setname, ped) #have no idea whether it's right or wrong
                         continue
                     else:
                         if genotype_target[0] in genotypedict[elder]:#if the other one has this version
                             c.execute("INSERT INTO consistent_parents VALUES('{0}','{1}','{2}','{3}')".format(target_CN, marker, setname, ped))
                             c.execute("INSERT INTO consistent_offspring VALUES('{0}','{1}','{2}','{3}','{4}')".format(elder, marker, setname, ped, target_CN))
+                        elif genotype_target[1] in genotypedict[elder]:#if the other one has this version
+                            c.execute("INSERT INTO consistent_parents VALUES('{0}','{1}','{2}','{3}')".format(target_CN, marker, setname, ped))
+                            c.execute("INSERT INTO consistent_offspring VALUES('{0}','{1}','{2}','{3}','{4}')".format(elder, marker, setname, ped, target_CN))
+                        else:
+                            addtoquest(target_CN, marker, 'parent', setname, ped)
+                            addtoquest(elder, marker, 'offspring', setname, ped)
             elif len(possible_inheritance['0'])==2:#both parents have a 0
                 addtoquest(target_CN, marker, 'parent', setname, ped)
                 addtoquest(elders[0], marker, 'offspring', setname, ped) #have no idea whether it's right or wrong
@@ -117,7 +123,7 @@ init(c)
 c.execute("SELECT DISTINCT markername FROM has_genotype")
 allmarkers = unfetchall_single(c.fetchall())
 
-c.execute("SHOW TABLES LIKE 'set%';")
+c.execute("SHOW TABLES LIKE 'set2%';")
 allsets = unfetchall_single(c.fetchall())
 
 for setname in allsets: #set by set
@@ -154,7 +160,7 @@ for setname in allsets: #set by set
                 for gen in genotype_p: #for each of the grandparents' alleles, record which gp(s) contributed allele
                     if gen not in possible_inheritance_p.keys():
                         possible_inheritance_p[gen] = [CN_p]
-                    elif possible_inheritance_p[gen]!= [CN_p]:
+                    elif CN_p not in possible_inheritance_p[gen]:
                         possible_inheritance_p[gen].append(CN_p)
                 
                 possible_inheritance_gp= {}#all alleles in generation I (Key: allele, value: list of grandparents with that allele)
@@ -175,7 +181,7 @@ for setname in allsets: #set by set
                     for gen in gp_genotype: #for each of the grandparents' alleles, record which gp(s) contributed allele
                         if gen not in possible_inheritance_gp.keys():
                             possible_inheritance_gp[gen] = [CN_gp]
-                        elif possible_inheritance_gp[gen]!= [CN_gp]:
+                        elif CN_gp not in possible_inheritance_gp[gen]:
                             possible_inheritance_gp[gen].append(CN_gp)
                             
                 checkgen(genotype_p, possible_inheritance_gp, grandparents, CN_p, marker, setname, ped, I_genotypes)

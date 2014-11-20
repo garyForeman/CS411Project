@@ -293,7 +293,8 @@ for(i=0; i<children.length; i++){
             .style("stroke-width",2)
             .style("fill-opacity",0.1)
             .style("stroke-opacity",0.7)
-    }else{ // female, create a circle
+    }
+    else if(currentSample[2] == 2){ // female, create a circle
         var nodeShape = svgContainer.append("circle");
         var shapeAttr = nodeShape.attr("cx", gen3Width*gen3+gen3Width/2)
             .attr("cy", 5/2*genHeight)

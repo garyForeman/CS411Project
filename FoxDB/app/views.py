@@ -272,61 +272,64 @@ def pedigree():
     paternal_grandmother = ''
     paternal_grandfather = ''
     if form.validate_on_submit():
-        sql_string = db_pedigree_marker([form.marker_id_chr12])
-        if sql_string == 1:
-            flash('ERROR: Please select a marker.')
-            return redirect('/pedigree')
+        if request.form['submit'] == 'Run Error Checker':
+            flash('You pushed the Error Checker button')
         else:
-            g.db_cursor.execute(sql_string)
-            marker_data = g.db_cursor.fetchone()
-            marker_id = marker_data[0].replace("'", '')
-            meiotic_pos = marker_data[1].replace("'", '')
-            fox_chr_seg = marker_data[-3].replace("'", '')
-            fox_chr = marker_data[-2].replace("'", '')
-            fox_chr_pos = str(marker_data[-1])
-
-            if form.pedigree_206.data != '':
-                sql_string = db_pedigree_tree(SET206_TABLE,
-                                              form.marker_id_chr12.data,
-                                              form.pedigree_206.data)
-            elif form.pedigree_207.data != '':
-                sql_string = db_pedigree_tree(SET207_TABLE,
-                                              form.marker_id_chr12.data,
-                                              form.pedigree_207.data)
-            else:
-                flash('ERROR: Please select a pedigree.')
+            sql_string = db_pedigree_marker([form.marker_id_chr12])
+            if sql_string == 1:
+                flash('ERROR: Please select a marker.')
                 return redirect('/pedigree')
-            flash(sql_string)
-            g.db_cursor.execute(sql_string)
-            data = g.db_cursor.fetchall()
-            family_tree = {}
-            for datum in data:
-                if datum[1] == 2 and datum[2] == 2:
-                    family_tree[datum[0]] = 'mother'
-                    family_tree[datum[3]] = 'maternal_grandmother'
-                    family_tree[datum[4]] = 'maternal_grandfather'
-                elif datum[1] == 2 and datum[2] == 1:
-                    family_tree[datum[0]] = 'father'
-                    family_tree[datum[3]] = 'paternal_grandmother'
-                    family_tree[datum[4]] = 'paternal_grandfather'
-                elif datum[1] == 3:
-                    family_tree[datum[0]] = 'child'
-            for datum in data:
-                family_member = family_tree[datum[0]]
-                if family_member == 'mother':
-                    mother = ','.join([str(i) for i in datum])
-                elif family_member == 'father':
-                    father = ','.join([str(i) for i in datum])
-                elif family_member == 'maternal_grandmother':
-                    maternal_grandmother = ','.join([str(i) for i in datum])
-                elif family_member == 'maternal_grandfather':
-                    maternal_grandfather = ','.join([str(i) for i in datum])
-                elif  family_member == 'paternal_grandmother':
-                    paternal_grandmother = ','.join([str(i) for i in datum])
-                elif family_member == 'paternal_grandfather':
-                    paternal_grandfather = ','.join([str(i) for i in datum])
-                elif family_member == 'child':
-                    children.append(','.join([str(i) for i in datum]))
+            else:
+                g.db_cursor.execute(sql_string)
+                marker_data = g.db_cursor.fetchone()
+                marker_id = marker_data[0].replace("'", '')
+                meiotic_pos = marker_data[1].replace("'", '')
+                fox_chr_seg = marker_data[-3].replace("'", '')
+                fox_chr = marker_data[-2].replace("'", '')
+                fox_chr_pos = str(marker_data[-1])
+
+                if form.pedigree_206.data != '':
+                    sql_string = db_pedigree_tree(SET206_TABLE,
+                                                  form.marker_id_chr12.data,
+                                                  form.pedigree_206.data)
+                elif form.pedigree_207.data != '':
+                    sql_string = db_pedigree_tree(SET207_TABLE,
+                                                  form.marker_id_chr12.data,
+                                                  form.pedigree_207.data)
+                else:
+                    flash('ERROR: Please select a pedigree.')
+                    return redirect('/pedigree')
+                flash(sql_string)
+                g.db_cursor.execute(sql_string)
+                data = g.db_cursor.fetchall()
+                family_tree = {}
+                for datum in data:
+                    if datum[1] == 2 and datum[2] == 2:
+                        family_tree[datum[0]] = 'mother'
+                        family_tree[datum[3]] = 'maternal_grandmother'
+                        family_tree[datum[4]] = 'maternal_grandfather'
+                    elif datum[1] == 2 and datum[2] == 1:
+                        family_tree[datum[0]] = 'father'
+                        family_tree[datum[3]] = 'paternal_grandmother'
+                        family_tree[datum[4]] = 'paternal_grandfather'
+                    elif datum[1] == 3:
+                        family_tree[datum[0]] = 'child'
+                for datum in data:
+                    family_member = family_tree[datum[0]]
+                    if family_member == 'mother':
+                        mother = ','.join([str(i) for i in datum])
+                    elif family_member == 'father':
+                        father = ','.join([str(i) for i in datum])
+                    elif family_member == 'maternal_grandmother':
+                        maternal_grandmother = ','.join([str(i) for i in datum])
+                    elif family_member == 'maternal_grandfather':
+                        maternal_grandfather = ','.join([str(i) for i in datum])
+                    elif  family_member == 'paternal_grandmother':
+                        paternal_grandmother = ','.join([str(i) for i in datum])
+                    elif family_member == 'paternal_grandfather':
+                        paternal_grandfather = ','.join([str(i) for i in datum])
+                    elif family_member == 'child':
+                        children.append(','.join([str(i) for i in datum]))
 
     return render_template('pedigree.html', title='Pedigree', form=form,
                            marker_id=marker_id, meiotic_pos=meiotic_pos,

@@ -16,6 +16,7 @@ from app.SQLfunctions import SAMPLE_TABLE, GENOTYPE_TABLE, MARKER_TABLE
 from app.SQLfunctions import SET206_TABLE, SET207_TABLE
 import MySQLdb
 from app.User import User
+from app.error_checker import error_checker
 
 @lm.user_loader
 def load_user(email):
@@ -273,7 +274,8 @@ def pedigree():
     paternal_grandfather = ''
     if form.validate_on_submit():
         if request.form['submit'] == 'Run Error Checker':
-            flash('You pushed the Error Checker button')
+            error_checker(g.db_cursor)
+            flash('Ran error checker')
         else:
             sql_string = db_pedigree_marker([form.marker_id_chr12])
             if sql_string == 1:

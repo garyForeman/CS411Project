@@ -240,14 +240,15 @@ def db_pedigree_marker(attributes):
 def db_pedigree_tree(table, marker, pedigree):
     """Function for generating the query to create the pedigree tree."""
 
-    sql_string = ("""SELECT """ + table + """.""" +
+    sql_string = ("""SELECT DISTINCT """ + table + """.""" +
                   ATTRIBUTES[table][0] + """, """ +
                   ATTRIBUTES[table][2] + """, """ +
                   ATTRIBUTES[SAMPLE_TABLE][3] + """, """ +
                   ATTRIBUTES[SAMPLE_TABLE][4] + """, """ +
                   ATTRIBUTES[SAMPLE_TABLE][5] + """, """ +
                   ATTRIBUTES[GENOTYPE_TABLE][2] + """, """ +
-                  ATTRIBUTES[GENOTYPE_TABLE][3] +
+                  ATTRIBUTES[GENOTYPE_TABLE][3] + """, """ +
+                  """checkedagainst""" +
                   """ FROM """ + table + """ LEFT JOIN """ + SAMPLE_TABLE +
                   """ ON """ + table + """.""" + ATTRIBUTES[table][0] +
                   """=""" + SAMPLE_TABLE + """.""" +
@@ -255,9 +256,16 @@ def db_pedigree_tree(table, marker, pedigree):
                   GENOTYPE_TABLE + """ ON """ + table + """.""" +
                   ATTRIBUTES[table][0] + """=""" + GENOTYPE_TABLE + """.""" +
                   ATTRIBUTES[GENOTYPE_TABLE][0] +
+                  """ LEFT JOIN questionable ON (""" + table + """.""" +
+                  ATTRIBUTES[table][0] + """=questionable.cornellnumber """ +
+                  """AND """ + GENOTYPE_TABLE + """.""" +
+                  ATTRIBUTES[GENOTYPE_TABLE][1] +
+                  """=questionable.markername)""" +
                   """ WHERE """ + ATTRIBUTES[table][1] + """=""" + pedigree +
-                  """ AND (""" + ATTRIBUTES[GENOTYPE_TABLE][1] + """=""" +
-                  marker + """ OR """ + ATTRIBUTES[GENOTYPE_TABLE][1] + 
+                  """ AND (""" + GENOTYPE_TABLE + """.""" +
+                  ATTRIBUTES[GENOTYPE_TABLE][1] + """=""" +
+                  marker + """ OR """ + GENOTYPE_TABLE + """.""" +
+                  ATTRIBUTES[GENOTYPE_TABLE][1] +
                   """ IS NULL);""")
     return sql_string
 
@@ -319,7 +327,7 @@ def import_data(table, csvname):
                       "notes) VALUES({0}, {1}, {2}, {3}, {4}, {5}, {6});"
                       .format(cornellnumber, name, generation, sex, mother,
                               father, notes))
- 
+
     elif table == USERS_TABLE:
         c.execute("""CREATE TABLE """ + table + """(""" +
                   ATTRIBUTES[table][0] + """ VARCHAR(50) PRIMARY KEY);""")

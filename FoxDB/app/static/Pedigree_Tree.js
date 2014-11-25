@@ -30,18 +30,18 @@ for(i=0; i< unprocessed_children.length; i++){
         .split(",");
 }
 //console.log(children);
-// var matGM = ['F05F506', 1, 2, 'NULL', 'NULL', 369, 375];
-// var matGF = ['F05F437', 1, 1, 'NULL', 'NULL', 371, 371];
-// var patGM = ['F05F590', 1, 2, 'NULL', 'NULL', 375, 375];
-// var patGF = ['F05F439', 1, 1, 'NULL', 'NULL', 367, 375];
-// var mother = ['F05F311', 2, 2, 'F05F506', 'F05F437', 369, 371];
-// var father = ['F05F563', 2, 1, 'F05F590', 'F05F439', 0, 0];
-// var children = [['F06F849', 3, 2, 'F05F311', 'F05F563', 371, 375]
-// ,['F06F850', 3, 1, 'F05F311', 'F05F563', 371, 375]
-// ,['F06F851', 3, 2, 'F05F311', 'F05F563', 371, 375]
-// ,['F06F852', 3, 1, 'F05F311', 'F05F563', 371, 375]
-// ,['F06F853', 3, 1, 'F05F311', 'F05F563', 369, 375]
-// ,['F06F854', 3, 2, 'F05F311', 'F05F563', 369, 375]];
+//var matGM = ['F05F506', 1, 2, 'NULL', 'NULL', 369, 375, 'None'];
+//var matGF = ['F05F437', 1, 1, 'NULL', 'NULL', 371, 371, 'Error'];
+//var patGM = ['F05F590', 1, 2, 'NULL', 'NULL', 375, 375];
+//var patGF = ['F05F439', 1, 1, 'NULL', 'NULL', 367, 375];
+//var mother = ['F05F311', 2, 2, 'F05F506', 'F05F437', 369, 371, 'None'];
+//var father = ['F05F563', 2, 1, 'F05F590', 'F05F439', 0, 0, 'Error'];
+//var children = [['F06F849', 3, 2, 'F05F311', 'F05F563', 371, 375]
+//,['F06F850', 3, 1, 'F05F311', 'F05F563', 371, 375]
+//,['F06F851', 3, 2, 'F05F311', 'F05F563', 371, 375]
+//,['F06F852', 3, 1, 'F05F311', 'F05F563', 371, 375]
+//,['F06F853', 3, 1, 'F05F311', 'F05F563', 369, 375]
+//,['F06F854', 3, 2, 'F05F311', 'F05F563', 369, 375]];
 var genThreeCount = children.length;
 var svgWidth = 600;
 var svgHeight = 600;
@@ -77,9 +77,7 @@ if(matGM.length > 1){
 					.style("stroke-width",2)
 					.style("fill-opacity",0.1)
 					.style("stroke-opacity",0.7)
-                    .on("mouseover", function(){tooltip.text(matGM[0]); return tooltip.style("visibility", "visible");})
-                    .on("mousemove", function(){return tooltip.style("top", (event.pageY-10)+"px").style("left",(event.pageX+10)+"px");})
-                    .on("mouseout", function(){return tooltip.style("visibility", "hidden");});
+                    
 	var lineData = [{"x": gen1Width/2+gen1Param, "y": genHeight/2}, {"x": gen1Width, "y": genHeight/2}, {"x": connectPt1_x, "y": connectPt1_y}]
 	var lineFunction = d3.svg.line()
                         .x(function(d) { return d.x; })
@@ -100,9 +98,11 @@ if(matGM.length > 1){
                 .attr('y', genHeight/2)
                 .attr('fill', 'black')
                 .style("text-anchor", "middle")
-                .on("mouseover", function(){tooltip.text(matGM[0]); return tooltip.style("visibility", "visible");})
-                .on("mousemove", function(){return tooltip.style("top", (event.pageY-10)+"px").style("left",(event.pageX+10)+"px");})
-                .on("mouseout", function(){return tooltip.style("visibility", "hidden");});
+    var cornell = svgContainer.append('text').text(matGM[0])
+                  .attr('x', gen1Width/2-30)
+                  .attr('y', gen1Width*9/8)
+                  .attr('fill', 'black')
+   
     if(matGM[7]!="None"){
     var warning = svgContainer.append("text")
                     .attr("x", gen1Width/2)
@@ -125,9 +125,6 @@ if(matGF.length > 1){
 					.style("stroke-width",2)
 					.style("fill-opacity",0.1)
 					.style("stroke-opacity",0.7)
-                    .on("mouseover", function(){tooltip.text(matGF[0]); return tooltip.style("visibility", "visible");})
-                    .on("mousemove", function(){return tooltip.style("top", (event.pageY-10)+"px").style("left",(event.pageX+10)+"px");})
-                    .on("mouseout", function(){return tooltip.style("visibility", "hidden");});
 	var lineData = [{"x": gen1Width*3/2-gen1Param, "y": genHeight/2}, {"x": gen1Width, "y": genHeight/2}, {"x": connectPt1_x, "y": connectPt1_y}]
 	var lineFunction = d3.svg.line()
                         .x(function(d) { return d.x; })
@@ -148,9 +145,10 @@ if(matGF.length > 1){
                 .attr('y', genHeight/2)
                 .attr('fill', 'black')
                 .style("text-anchor", "middle")
-                .on("mouseover", function(){tooltip.text(matGF[0]); return tooltip.style("visibility", "visible");})
-                .on("mousemove", function(){return tooltip.style("top", (event.pageY-10)+"px").style("left",(event.pageX+10)+"px");})
-                .on("mouseout", function(){return tooltip.style("visibility", "hidden");});
+    var cornell = svgContainer.append('text').text(matGF[0])
+                  .attr('x', gen1Width*3/2-30)
+                  .attr('y', gen1Width*9/8)
+                  .attr('fill', 'black')
     if(matGF[7]!="None"){
     var warning = svgContainer.append("text")
                     .attr("x", gen1Width*3/2)
@@ -172,9 +170,6 @@ if(patGM.length >1){
 					.style("stroke-width",2)
 					.style("fill-opacity",0.1)
 					.style("stroke-opacity",0.7)
-                    .on("mouseover", function(){tooltip.text(patGM[0]); return tooltip.style("visibility", "visible");})
-                    .on("mousemove", function(){return tooltip.style("top", (event.pageY-10)+"px").style("left",(event.pageX+10)+"px");})
-                    .on("mouseout", function(){return tooltip.style("visibility", "hidden");});
 	var lineData = [{"x": gen1Width*5/2+gen1Param, "y": genHeight/2}, {"x": gen1Width*3, "y": genHeight/2}, {"x": connectPt2_x, "y": connectPt2_y}]
 	var lineFunction = d3.svg.line()
                         .x(function(d) { return d.x; })
@@ -195,9 +190,10 @@ if(patGM.length >1){
                 .attr('y', genHeight/2)
                 .attr('fill', 'black')
                 .style("text-anchor", "middle")
-                .on("mouseover", function(){tooltip.text(patGM[0]); return tooltip.style("visibility", "visible");})
-                .on("mousemove", function(){return tooltip.style("top", (event.pageY-10)+"px").style("left",(event.pageX+10)+"px");})
-                .on("mouseout", function(){return tooltip.style("visibility", "hidden");});
+    var cornell = svgContainer.append('text').text(patGM[0])
+                  .attr('x', gen1Width*3/2+120)
+                  .attr('y', gen1Width*9/8)
+                  .attr('fill', 'black')
     if(patGM[7]!="None"){
     var warning = svgContainer.append("text")
                     .attr("x", gen1Width*5/2)
@@ -219,9 +215,6 @@ if(patGF.length>1){
 					.style("stroke-width",2)
 					.style("fill-opacity",0.1)
 					.style("stroke-opacity",0.7)
-                    .on("mouseover", function(){tooltip.text(patGF[0]); return tooltip.style("visibility", "visible");})
-                    .on("mousemove", function(){return tooltip.style("top", (event.pageY-10)+"px").style("left",(event.pageX+10)+"px");})
-                    .on("mouseout", function(){return tooltip.style("visibility", "hidden");});
 	var lineData = [{"x": gen1Width*7/2-gen1Param, "y": genHeight/2}, {"x": gen1Width*3, "y": genHeight/2}, {"x": connectPt2_x, "y": connectPt2_y}]
 	var lineFunction = d3.svg.line()
                         .x(function(d) { return d.x; })
@@ -242,9 +235,10 @@ if(patGF.length>1){
                 .attr('y', genHeight/2)
                 .attr('fill', 'black')
                 .style("text-anchor", "middle")
-                .on("mouseover", function(){tooltip.text(patGF[0]); return tooltip.style("visibility", "visible");})
-                .on("mousemove", function(){return tooltip.style("top", (event.pageY-10)+"px").style("left",(event.pageX+10)+"px");})
-                .on("mouseout", function(){return tooltip.style("visibility", "hidden");});
+    var cornell = svgContainer.append('text').text(patGF[0])
+                  .attr('x', gen1Width*3/2+270)
+                  .attr('y', gen1Width*9/8)
+                  .attr('fill', 'black')
     if(patGF[7]!="None"){
     var warning = svgContainer.append("text")
                     .attr("x", gen1Width*7/2)
@@ -265,9 +259,6 @@ if(mother.length>1){
 					.style("stroke-width",2)
 					.style("fill-opacity",0.1)
 					.style("stroke-opacity",0.7)
-                    .on("mouseover", function(){tooltip.text(mother[0]); return tooltip.style("visibility", "visible");})
-                    .on("mousemove", function(){return tooltip.style("top", (event.pageY-10)+"px").style("left",(event.pageX+10)+"px");})
-                    .on("mouseout", function(){return tooltip.style("visibility", "hidden");});
 	var topLineData = [{"x": gen2Width/2, "y": 3/2*genHeight-gen2Param}, {"x": connectPt1_x, "y": connectPt1_y}]
 	var bottomLineData = [{"x": gen2Width/2+gen2Param,"y": 3/2*genHeight},{"x": gen2Width,"y": 3/2*genHeight},{"x": connectPt3_x,"y": connectPt3_y}]	
 	var lineFunction = d3.svg.line()
@@ -294,9 +285,10 @@ if(mother.length>1){
                 .attr('y', genHeight*3/2)
                 .attr('fill', 'black')
                 .style("text-anchor", "middle")
-                .on("mouseover", function(){tooltip.text(mother[0]); return tooltip.style("visibility", "visible");})
-                .on("mousemove", function(){return tooltip.style("top", (event.pageY-10)+"px").style("left",(event.pageX+10)+"px");})
-                .on("mouseout", function(){return tooltip.style("visibility", "hidden");});
+    var cornell = svgContainer.append('text').text(mother[0])
+                  .attr('x', gen2Width/5)
+                  .attr('y', genHeight*10/8-15)
+                  .attr('fill', 'black')
     if(mother[7]!="None"){
     var warning = svgContainer.append("text")
                     .attr("x", gen2Width/3)
@@ -318,9 +310,6 @@ if(father.length>1){
 					.style("stroke-width",2)
 					.style("fill-opacity",0.1)
 					.style("stroke-opacity",0.7)
-                    .on("mouseover", function(){tooltip.text(father[0]); return tooltip.style("visibility", "visible");})
-                    .on("mousemove", function(){return tooltip.style("top", (event.pageY-10)+"px").style("left",(event.pageX+10)+"px");})
-                    .on("mouseout", function(){return tooltip.style("visibility", "hidden");});
 	var topLineData = [{"x": 3/2*gen2Width, "y": 3/2*genHeight-gen2Param}, {"x": connectPt2_x, "y": connectPt2_y}]
 	var bottomLineData = [{"x": 3/2*gen2Width-gen2Param,"y": 3/2*genHeight},{"x": gen2Width,"y": 3/2*genHeight},{"x": connectPt3_x,"y": connectPt3_y}]
 	var lineFunction = d3.svg.line()
@@ -347,9 +336,10 @@ if(father.length>1){
                 .attr('y', genHeight*3/2)
                 .attr('fill', 'black')
                 .style("text-anchor", "middle")
-                .on("mouseover", function(){tooltip.text(father[0]); return tooltip.style("visibility", "visible");})
-                .on("mousemove", function(){return tooltip.style("top", (event.pageY-10)+"px").style("left",(event.pageX+10)+"px");})
-                .on("mouseout", function(){return tooltip.style("visibility", "hidden");});
+    var cornell = svgContainer.append('text').text(father[0])
+                  .attr('x', gen2Width/5+430)
+                  .attr('y', genHeight*10/8-15)
+                  .attr('fill', 'black')
     if(father[7] != "None"){
     var warning = svgContainer.append("text")
                     .attr("x", gen2Width*5/3+10)
@@ -359,7 +349,6 @@ if(father.length>1){
                     .style("text-anchor", 'middle')
                     .style("visibility", "visible")
                     .text("!");}
-}
 
 for(i=0; i<children.length; i++){
 	var currentSample = children[i];
@@ -375,9 +364,6 @@ for(i=0; i<children.length; i++){
 									.style("stroke-width",2)
 									.style("fill-opacity",0.1)
 									.style("stroke-opacity",0.7)
-                                    .on("mouseover", function(){tooltip.text(currentSample[0]); return tooltip.style("visibility", "visible");})
-                                    .on("mousemove", function(){return tooltip.style("top", (event.pageY-10)+"px").style("left",(event.pageX+10)+"px");})
-                                    .on("mouseout", function(){return tooltip.style("visibility", "hidden");});
 	}else if(currentSample[2]==2){ // female, create a circle
 			var nodeShape = svgContainer.append("circle");
 			var shapeAttr = nodeShape.attr("cx", gen3Width*gen3+gen3Width/2)
@@ -388,9 +374,6 @@ for(i=0; i<children.length; i++){
 									.style("stroke-width",2)
 									.style("fill-opacity",0.1)
 									.style("stroke-opacity",0.7)
-                                    .on("mouseover", function(){tooltip.text(currentSample[0]); return tooltip.style("visibility", "visible");})
-                                    .on("mousemove", function(){return tooltip.style("top", (event.pageY-10)+"px").style("left",(event.pageX+10)+"px");})
-                                    .on("mouseout", function(){return tooltip.style("visibility", "hidden");});
 	}
 	gen3++;
 		
@@ -415,9 +398,10 @@ for(i=0; i<children.length; i++){
                 .attr('y', genHeight*5/2)
                 .attr('fill', 'black')
                 .style("text-anchor", "middle")
-                .on("mouseover", function(){tooltip.text(currentSample[0]); return tooltip.style("visibility", "visible");})
-                .on("mousemove", function(){return tooltip.style("top", (event.pageY-10)+"px").style("left",(event.pageX+10)+"px");})
-                .on("mouseout", function(){return tooltip.style("visibility", "hidden");});
+        var cornell = svgContainer.append('text').text(currentSample[0])
+                  .attr('x', gen3Width*gen3-gen3Width/2-25)
+                  .attr('y', genHeight*5/2+ gen3Param+50)
+                  .attr('fill', 'black')
         if(currentSample[7]!= "None"){
             var warning = svgContainer.append("text")
                     .attr("x", gen3Width*gen3-gen3Width/2)
@@ -426,10 +410,7 @@ for(i=0; i<children.length; i++){
                     .style("fill", 'red')
                     .style("text-anchor", 'middle')
                     //.style("visibility", "visible")
-                    .text("!");
+                    .text("!");}
         }
         
 }
-
-
-

@@ -260,7 +260,8 @@ def db_pedigree_tree(table, marker, pedigree):
                   ATTRIBUTES[table][0] + """=questionable.cornellnumber """ +
                   """AND """ + GENOTYPE_TABLE + """.""" +
                   ATTRIBUTES[GENOTYPE_TABLE][1] +
-                  """=questionable.markername)""" +
+                  """=questionable.markername AND """ + table + """.""" +
+                  ATTRIBUTES[table][1] + """=questionable.ped)"""
                   """ WHERE """ + ATTRIBUTES[table][1] + """=""" + pedigree +
                   """ AND (""" + GENOTYPE_TABLE + """.""" +
                   ATTRIBUTES[GENOTYPE_TABLE][1] + """=""" +

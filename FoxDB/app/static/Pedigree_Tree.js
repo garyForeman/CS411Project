@@ -103,7 +103,7 @@ if(matGM.length > 1){
                   .attr('y', gen1Width*9/8)
                   .attr('fill', 'black')
    
-    if(matGM[7]!="None"){
+    if(matGM[7].trim()!="None"){
     var warning = svgContainer.append("text")
                     .attr("x", gen1Width/2)
                     .attr("y", gen1Width*3/8)
@@ -149,7 +149,7 @@ if(matGF.length > 1){
                   .attr('x', gen1Width*3/2-30)
                   .attr('y', gen1Width*9/8)
                   .attr('fill', 'black')
-    if(matGF[7]!="None"){
+    if(matGF[7].trim()!="None"){
     var warning = svgContainer.append("text")
                     .attr("x", gen1Width*3/2)
                     .attr("y", gen1Width*3/8)
@@ -194,7 +194,7 @@ if(patGM.length >1){
                   .attr('x', gen1Width*3/2+120)
                   .attr('y', gen1Width*9/8)
                   .attr('fill', 'black')
-    if(patGM[7]!="None"){
+    if(patGM[7].trim()!="None"){
     var warning = svgContainer.append("text")
                     .attr("x", gen1Width*5/2)
                     .attr("y", gen1Width*3/8)
@@ -239,7 +239,7 @@ if(patGF.length>1){
                   .attr('x', gen1Width*3/2+270)
                   .attr('y', gen1Width*9/8)
                   .attr('fill', 'black')
-    if(patGF[7]!="None"){
+    if(patGF[7].trim()!="None"){
     var warning = svgContainer.append("text")
                     .attr("x", gen1Width*7/2)
                     .attr("y", gen1Width*3/8)
@@ -289,7 +289,7 @@ if(mother.length>1){
                   .attr('x', gen2Width/5)
                   .attr('y', genHeight*10/8-15)
                   .attr('fill', 'black')
-    if(mother[7]!="None"){
+    if(mother[7].trim()!="None"){
     var warning = svgContainer.append("text")
                     .attr("x", gen2Width/3)
                     .attr("y", genHeight*4/3)
@@ -340,7 +340,7 @@ if(father.length>1){
                   .attr('x', gen2Width/5+430)
                   .attr('y', genHeight*10/8-15)
                   .attr('fill', 'black')
-    if(father[7] != "None"){
+    if(father[7].trim() != "None"){
     var warning = svgContainer.append("text")
                     .attr("x", gen2Width*5/3+10)
                     .attr("y", genHeight*4/3)
@@ -402,7 +402,7 @@ for(i=0; i<children.length; i++){
                   .attr('x', gen3Width*gen3-gen3Width/2-25)
                   .attr('y', genHeight*5/2+ gen3Param+50)
                   .attr('fill', 'black')
-        if(currentSample[7]!= "None"){
+        if(currentSample[7].trim()!= "None"){
             var warning = svgContainer.append("text")
                     .attr("x", gen3Width*gen3-gen3Width/2)
                     .attr("y", genHeight*5/2+ gen3Param+35)

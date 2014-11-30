@@ -239,6 +239,10 @@ def query():
         elif sql_string == 2:
             flash('Query disallowed: query for samples and markers separately')
             return redirect('/query')
+        elif sql_string == 3:
+            flash('Your WHERE clause contained malicious code and will not ' +
+                  'be processed.')
+            return redirect('/query')
         else:
             try:
                 #flash(sql_string)

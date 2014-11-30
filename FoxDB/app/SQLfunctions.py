@@ -1,6 +1,7 @@
 '''Functions for querying, inserting rows, and deleting rows from FoxDB.'''
 
 from flask import flash
+from sanitize_where import sanitize_where
 import MySQLdb
 import csv
 import re
@@ -50,9 +51,7 @@ def db_query(attributes, where_clause):
     given by the where_clause argument."""
 
     #Strip the where_clause, we'll add these portions later
-    where_clause = re.sub('WHERE ', '', where_clause)
-    where_clause = re.sub('where ', '', where_clause)
-    where_clause = re.sub('Where ', '', where_clause)
+    where_clause = re.sub('WHERE ', '', where_clause, flags=re.IGNORECASE)
     where_clause = where_clause.rstrip(';').replace('\n', ' ').rstrip()
 
     sample_all = attributes.pop(0)
@@ -92,6 +91,10 @@ def db_query(attributes, where_clause):
     #Handles an ill advised query
     if use_sample and not use_genotype and use_marker:
         return 2
+
+    #Handles WHERE clause with malicious code
+    if sanitize_where(where_clause):
+        return 3
 
     from_query = " FROM"
     if use_sample:

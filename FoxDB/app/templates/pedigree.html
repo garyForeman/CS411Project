@@ -18,41 +18,48 @@
   <table>
     <tr>
       <td>Marker ID:</td><td>{{ marker_id }}</td>
-      <td>Maternal Grandmother:</td><td id="MaternalGM">
+      <td style="display:none;">Maternal Grandmother:</td>
+      <td id="MaternalGM" style="display:none;">
 	{{ maternal_grandmother }}
       </td>
     </tr>
     <tr>
       <td>Meiotic Position:</td><td>{{ meiotic_pos }}</td>
-      <td>Maternal Grandfather:</td><td id="MaternalGF">
+      <td style="display:none;">Maternal Grandfather:</td>
+      <td id="MaternalGF" style="display:none;">
 	{{ maternal_grandfather }}
       </td>
     </tr>
     <tr>
       <td>Fox Chromosome Segment:</td><td>{{ fox_chr_seg }}</td>
-      <td>Paternal Grandmother:</td><td id="PaternalGM">
+      <td style="display:none;">Paternal Grandmother:</td>
+      <td id="PaternalGM" style="display:none;">
 	{{ paternal_grandmother }}
       </td>
     </tr>
     <tr>
       <td>Fox Chromosome:</td><td>{{ fox_chr }}</td>
-      <td>Paternal Grandfather:</td><td id="PaternalGF">
+      <td style="display:none;">Paternal Grandfather:</td>
+      <td id="PaternalGF" style="display:none;">
 	{{ paternal_grandfather }}
       </td>
     </tr>
     <tr>
       <td>Fox Chromosome Position:</td><td>{{ fox_chr_pos }}</td>
-      <td>Mother:</td><td id="Mother">{{ mother }}</td>
+      <td style="display:none;">Mother:</td>
+      <td id="Mother" style="display:none;">{{ mother }}</td>
     </tr>
     <tr>
       <td></td><td></td>
-      <td>Father:</td><td id="Father">{{ father }}</td>
+      <td style="display:none;">Father:</td>
+      <td id="Father" style="display:none;">{{ father }}</td>
     </tr>
     <div class="hidden" id="Children">{{ children }}</div>
     {% for child in children %}
     <tr>
       <td></td><td></td>
-      <td>Child:</td><td>{{ child }}</td>
+      <td style="display:none;">Child:</td>
+      <td style="display:none;">{{ child }}</td>
     </tr>
     {% endfor %}
   </table>

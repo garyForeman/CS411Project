@@ -14,9 +14,20 @@ def unfetchall_multi(raw):
     return out
 
 def unfetchone_multi(raw):
+    if raw == None:
+        return None
     out = ""
     for x in raw:
         out+=(','.join(str(i) for i in x))
+    return out.split(",")
+
+def unfetchone_list(raw):
+    if raw == None:
+        return None
+    out = []
+    for x in raw:
+        print x
+        out.append(','.join(str(i) for i in x))
     return out.split(",")
 
 def openconn():
@@ -62,6 +73,41 @@ def addtoquest(CN, marker, checkedagainst,setname, ped):
                       .format(CN, marker, checkedagainst, setname, ped))
 
 def checkgen(genotype_target, possible_inheritance, elders, target_CN, marker, setname, ped, genotypedict):
+    changedtogrand = 0
+    if '0' in possible_inheritance.keys():
+        zeroparents = possible_inheritance['0'] #even if they only have one, bad
+        for parent in zeroparents:
+            grandgen_perparent = []
+            addtoquest(parent, marker, 'offspring', setname, ped) #it has a zero, and should be checked
+            c.execute("SELECT mother, father FROM sample_info_clean WHERE cornellnumber='{0}' AND mother <>'NULL' AND father <>'NULL';".format(parent))
+            grandparents = c.fetchone()
+            if grandparents == None:
+                c.execute("SELECT mother FROM sample_info_clean WHERE cornellnumber='{0}' AND mother <>'NULL';".format(parent))
+                grandparents = c.fetchone()
+                if grandparents == None:
+                    c.execute("SELECT father FROM sample_info_clean WHERE cornellnumber='{0}' AND father <>'NULL';".format(parent))
+
+            if grandparents != None:
+                changedtogrand =1
+                grandparents= list(grandparents)
+                for grandparent in grandparents:
+                    grand_genotypes = []
+                    c.execute("SELECT genotype1, genotype2 FROM has_genotype WHERE cornellnumber='{0}' AND markername ='{1}'".format(grandparent, marker))
+                    genotypes_long = list(c.fetchone())
+                    for gen_temp in genotypes_long:
+                        grand_genotypes.append(str(int(gen_temp)))
+                    for genotype_temp in grand_genotypes:
+                        grandgen_perparent.append(genotype_temp)
+            genotypedict[parent]=grandgen_perparent
+            possible_inheritance = {}
+            for elder in elders:
+                e_genotypes = genotypedict[elder]
+                for gen_e in e_genotypes: #for each of the grandparents' alleles, record which gp(s) contributed allele
+                    if gen_e not in possible_inheritance.keys():
+                        possible_inheritance[gen_e] = [elder]
+                    elif elder not in possible_inheritance[gen_e]:
+                        possible_inheritance[gen_e].append(elder)
+                
     if '0' not in genotype_target: #if the genotype of the target sample has 2 known values
         if genotype_target[0] in possible_inheritance.keys() and genotype_target[1] in possible_inheritance.keys():#both alleles found in parents
             if genotype_target[0]==genotype_target[1]: #if homozygotic
@@ -76,13 +122,13 @@ def checkgen(genotype_target, possible_inheritance, elders, target_CN, marker, s
                         if elder == goodparent:
                             c.execute("INSERT INTO consistent_offspring VALUES('{0}','{1}','{2}','{3}','{4}')".format(elder, marker, setname, ped, target_CN))
                         else:
-                            addtoquest(elder, marker, 'offspring', setname, ped) #have no idea whether it's right or wrong
+                            addtoquest(elder, marker, 'offspring', setname, ped) #seems wrong
                     addtoquest(target_CN, marker, 'parent', setname, ped)
                 else:
                     addtoquest(target_CN, marker, 'parent', setname, ped)
                     addtoquest(elders[0], marker, 'offspring', setname, ped)
                     addtoquest(elders[1], marker, 'offspring', setname, ped)
-            elif genotype_target[0] != genotype_target[1]: #if heterozygote THIS IS THE TROUBLE CLAUSE
+            elif genotype_target[0] != genotype_target[1]: #if heterozygote
                 if genotype_target[0] in genotypedict[elders[0]] and genotype_target[1] in genotypedict[elders[1]]:
                     c.execute("INSERT INTO consistent_parents VALUES('{0}','{1}','{2}','{3}')".format(target_CN, marker, setname, ped))
                     c.execute("INSERT INTO consistent_offspring VALUES('{0}','{1}','{2}','{3}','{4}')".format(elders[0], marker, setname, ped, target_CN))
@@ -108,45 +154,55 @@ def checkgen(genotype_target, possible_inheritance, elders, target_CN, marker, s
                 addtoquest(elders[1], marker, 'offspring', setname, ped)
                 addtoquest(elders[0], marker, 'offspring', setname, ped)
                 
-        elif '0' in possible_inheritance.keys(): #if one or more parent does not have it
-            zeroparents = possible_inheritance['0']
-            for parent in zeroparents:
-                addtoquest(parent, marker, 'offspring', setname, ped)
-            if len(possible_inheritance['0'])==1:
-                canskip = possible_inheritance['0'][0] #CN of the one that gets a pass, Gary's change added
-                for elder in elders:
-                    if elder == canskip: 
-                        addtoquest(elder, marker, 'offspring', setname, ped) #have no idea whether it's right or wrong
-                    else:
-                        if genotype_target[0] in genotypedict[elder]:#if the other one has this version
-                            c.execute("INSERT INTO consistent_parents VALUES('{0}','{1}','{2}','{3}')".format(target_CN, marker, setname, ped))
-                            c.execute("INSERT INTO consistent_offspring VALUES('{0}','{1}','{2}','{3}','{4}')".format(elder, marker, setname, ped, target_CN))
-                        elif genotype_target[1] in genotypedict[elder]:#if the other one has this version
-                            c.execute("INSERT INTO consistent_parents VALUES('{0}','{1}','{2}','{3}')".format(target_CN, marker, setname, ped))
-                            c.execute("INSERT INTO consistent_offspring VALUES('{0}','{1}','{2}','{3}','{4}')".format(elder, marker, setname, ped, target_CN))
+        elif '0' in possible_inheritance.keys(): #if one or more parent has blanks
+            if changedtogrand==1:
+                if genotype_target[1] in possible_inheritance.keys() and genotype_target[0] in possible_inheritance.keys():
+                    print "fixed something"
+                    c.execute("INSERT INTO consistent_parents VALUES('{0}','{1}','{2}','{3}')".format(target_CN, marker, setname, ped))
+                    c.execute("INSERT INTO consistent_offspring VALUES('{0}','{1}','{2}','{3}','{4}')".format(elders[0], marker, setname, ped, target_CN))
+                    c.execute("INSERT INTO consistent_offspring VALUES('{0}','{1}','{2}','{3}','{4}')".format(elders[1], marker, setname, ped, target_CN))
+                else:
+                    changedtogrand = 0
+            if changedtogrand==0:
+                if len(possible_inheritance['0'])==1:
+                    canskip = possible_inheritance['0'][0] #CN of the one that gets a pass, Gary's change added
+                    for elder in elders:
+                        if elder == canskip: 
+                            addtoquest(elder, marker, 'offspring', setname, ped) #have no idea whether it's right or wrong
                         else:
-                            addtoquest(target_CN, marker, 'parent', setname, ped)
-                            addtoquest(elder, marker, 'offspring', setname, ped)
-            elif len(possible_inheritance['0'])==2:#both parents have a 0
-                addtoquest(target_CN, marker, 'parent', setname, ped)
-                addtoquest(elders[0], marker, 'offspring', setname, ped)
-                addtoquest(elders[1], marker, 'offspring', setname, ped)
-            else: #this doesn't happen!
-                addtoquest(target_CN, marker, 'parent', setname, ped)
-                addtoquest(elders[0], marker, 'offspring', setname, ped)
-                addtoquest(elders[1], marker, 'offspring', setname, ped)
+                            if genotype_target[0] in genotypedict[elder]:#if the other one has this version
+                                c.execute("INSERT INTO consistent_parents VALUES('{0}','{1}','{2}','{3}')".format(target_CN, marker, setname, ped))
+                                c.execute("INSERT INTO consistent_offspring VALUES('{0}','{1}','{2}','{3}','{4}')".format(elder, marker, setname, ped, target_CN))
+                            elif genotype_target[1] in genotypedict[elder]:#if the other one has this version
+                                c.execute("INSERT INTO consistent_parents VALUES('{0}','{1}','{2}','{3}')".format(target_CN, marker, setname, ped))
+                                c.execute("INSERT INTO consistent_offspring VALUES('{0}','{1}','{2}','{3}','{4}')".format(elder, marker, setname, ped, target_CN))
+                            else:
+                                addtoquest(target_CN, marker, 'parent', setname, ped)
+                                addtoquest(elder, marker, 'offspring', setname, ped)
+                elif len(possible_inheritance['0'])==2:#both parents have a 0
+                    addtoquest(target_CN, marker, 'parent', setname, ped)
+                    addtoquest(elders[0], marker, 'offspring', setname, ped)
+                    addtoquest(elders[1], marker, 'offspring', setname, ped)
+                else: #this doesn't happen!
+                    addtoquest(target_CN, marker, 'parent', setname, ped)
+                    addtoquest(elders[0], marker, 'offspring', setname, ped)
+                    addtoquest(elders[1], marker, 'offspring', setname, ped)
         else: #if parental alleles aren't in grandparental genotypes and it's not because of blanks
             addtoquest(target_CN, marker, 'parent', setname, ped)#definitely wrong
             addtoquest(elders[0], marker, 'offspring', setname, ped) #have no idea whether it's right or wrong
             addtoquest(elders[1], marker, 'offspring', setname, ped) #have no idea whether it's right or wrong
             
-    else: #if it includes blanks
+    else: #if target's genotype includes blanks
         addtoquest(target_CN, marker, 'offspring', setname, ped) #have no idea whether it's right or wrong
         addtoquest(target_CN, marker, 'parent', setname, ped) #have no idea whether it's right or wrong
-        c.execute("""SELECT has_genotype.cornellnumber, genotype1, genotype2 from sample_info_clean,"""
-                  +""" has_genotype WHERE sample_info_clean.cornellnumber = has_genotype.cornellnumber AND markername ='"""
-                  + marker + """' AND (mother = '""" + elders[0] + """' AND father = '""" + elders[1] + """') OR (father = '"""
-                  + elders[0]+"""' and mother = '"""+elders[1]+"""')""")
+
+        #just quit now because you can't really check the parents on this one.
+        
+        #c.execute("""SELECT has_genotype.cornellnumber, genotype1, genotype2 from sample_info_clean,"""
+        #          +""" has_genotype WHERE sample_info_clean.cornellnumber = has_genotype.cornellnumber AND markername ='"""
+        #          + marker + """' AND (mother = '""" + elders[0] + """' AND father = '""" + elders[1] + """') OR (father = '"""
+        #          + elders[0]+"""' and mother = '"""+elders[1]+"""')""")
+        """
         sib_genotypes = unfetchall_multi(c.fetchall())
         ever_error = 0
         for sibgen in sib_genotypes:
@@ -163,10 +219,10 @@ def checkgen(genotype_target, possible_inheritance, elders, target_CN, marker, s
             elif genotype_sib[0] in possible_inheritance.keys() and genotype_sib[1] in possible_inheritance.keys():#both alleles found in parents
                 if genotype_sib[0]==genotype_sib[1]: #if homozygotic
                     if len(possible_inheritance[genotype_sib[0]])<2:#normal homozygote, both parents have it
-                        addtoquest(elders[0], marker, 'offspring', setname, ped) #have no idea whether it's right or wrong
-                        addtoquest(elders[1], marker, 'offspring', setname, ped) #have no idea whether it's right or wrong
+                        addtoquest(elders[0], marker, 'offspring', setname, ped)
+                        addtoquest(elders[1], marker, 'offspring', setname, ped)
                         ever_error =1
-                elif genotype_target[0] != genotype_target[1]: #if heterozygote THIS IS THE TROUBLE CLAUSE
+                elif genotype_target[0] != genotype_target[1]: #if heterozygote
                     if genotype_target[0] in genotypedict[elders[0]] and genotype_target[1] in genotypedict[elders[1]]:
                         continue #it's good, so move along
                     elif genotype_target[1] in genotypedict[elders[0]] and genotype_target[0] in genotypedict[elders[1]]:
@@ -175,17 +231,18 @@ def checkgen(genotype_target, possible_inheritance, elders, target_CN, marker, s
                         addtoquest(elders[1], marker, 'offspring', setname, ped)
                         addtoquest(elders[0], marker, 'offspring', setname, ped)
                         ever_error = 1
-                else: #this doesn't happen. SCORE!
+                else: #should never happen (needs to either be homo to heterozygote)
                     addtoquest(elders[1], marker, 'offspring', setname, ped)
                     addtoquest(elders[0], marker, 'offspring', setname, ped)
                     ever_error = 1
-            else: #if parental alleles aren't in grandparental genotypes and it's not because of blanks
+            else: #if parents don't have these alleles
                 addtoquest(elders[0], marker, 'offspring', setname, ped) #have no idea whether it's right or wrong
                 addtoquest(elders[1], marker, 'offspring', setname, ped) #have no idea whether it's right or wrong
                 ever_error = 1
         if ever_error == 0:
             c.execute("INSERT INTO consistent_offspring VALUES('{0}','{1}','{2}','{3}','{4}')".format(elders[0], marker, setname, ped, target_CN))
             c.execute("INSERT INTO consistent_offspring VALUES('{0}','{1}','{2}','{3}','{4}')".format(elders[1], marker, setname, ped, target_CN))
+            """
 
 
 test = 0       

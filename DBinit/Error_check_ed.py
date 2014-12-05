@@ -74,7 +74,36 @@ def addtoquest(CN, marker, checkedagainst,setname, ped):
 
 def checkgen(genotype_target, possible_inheritance, elders, target_CN, marker, setname, ped, genotypedict):
     changedtogrand = 0
-    if '0' in possible_inheritance.keys():
+    if "NULL" in elders:
+        if elders == ['NULL','NULL']:
+            c.execute("INSERT INTO consistent_parents VALUES('{0}','{1}','{2}','{3}')".format(target_CN, marker, setname, ped))
+            return
+
+        for sample_over in elders:
+            if sample_over != "NULL":
+                if genotype_target[0] in genotypedict[sample_over] or genotype_target[1] in genotypedict[sample_over]:
+                    c.execute("INSERT INTO consistent_parents VALUES('{0}','{1}','{2}','{3}')".format(target_CN, marker, setname, ped))
+                    c.execute("INSERT INTO consistent_offspring VALUES('{0}','{1}','{2}','{3}','{4}')".format(sample_over, marker, setname, ped, target_CN))
+                    return
+                else:
+                    addtoquest(sample_over, marker, 'offspring', setname, ped)
+                    addtoquest(target_CN, marker, 'parent', setname, ped)
+                    return
+            
+    if 'ped8sire' in elders:
+        genotypedict['ped8sire']=['0','0']
+        if '0' in possible_inheritance.keys():
+            possible_inheritance['0'].append('ped8sire')
+        else:
+            possible_inheritance['0']=['ped8sire']
+    if 'ped37dam' in elders:
+        genotypedict['ped37dam']=['0','0']
+        if '0' in possible_inheritance.keys():
+            possible_inheritance['0'].append('ped37dam')
+        else:
+            possible_inheritance['0']=['ped37dam']
+            
+    if '0' in possible_inheritance.keys() and possible_inheritance['0']!="NULL":
         zeroparents = possible_inheritance['0'] #even if they only have one, bad
         for parent in zeroparents:
             grandgen_perparent = []
@@ -107,7 +136,7 @@ def checkgen(genotype_target, possible_inheritance, elders, target_CN, marker, s
                         possible_inheritance[gen_e] = [elder]
                     elif elder not in possible_inheritance[gen_e]:
                         possible_inheritance[gen_e].append(elder)
-                
+               
     if '0' not in genotype_target: #if the genotype of the target sample has 2 known values
         if genotype_target[0] in possible_inheritance.keys() and genotype_target[1] in possible_inheritance.keys():#both alleles found in parents
             if genotype_target[0]==genotype_target[1]: #if homozygotic
@@ -115,15 +144,15 @@ def checkgen(genotype_target, possible_inheritance, elders, target_CN, marker, s
                     c.execute("INSERT INTO consistent_parents VALUES('{0}','{1}','{2}','{3}')".format(target_CN, marker, setname, ped))
                     c.execute("INSERT INTO consistent_offspring VALUES('{0}','{1}','{2}','{3}','{4}')".format(elders[0], marker, setname, ped, target_CN))
                     c.execute("INSERT INTO consistent_offspring VALUES('{0}','{1}','{2}','{3}','{4}')".format(elders[1], marker, setname, ped, target_CN))
-                    #normal heterozygote is next line
                 elif genotype_target[0] in possible_inheritance.keys():
                     goodparent = possible_inheritance[genotype_target[0]][0]
                     for elder in elders:
                         if elder == goodparent:
                             c.execute("INSERT INTO consistent_offspring VALUES('{0}','{1}','{2}','{3}','{4}')".format(elder, marker, setname, ped, target_CN))
+                            c.execute("INSERT INTO consistent_parents VALUES('{0}','{1}','{2}','{3}')".format(target_CN, marker, setname, ped))
                         else:
                             addtoquest(elder, marker, 'offspring', setname, ped) #seems wrong
-                    addtoquest(target_CN, marker, 'parent', setname, ped)
+                    
                 else:
                     addtoquest(target_CN, marker, 'parent', setname, ped)
                     addtoquest(elders[0], marker, 'offspring', setname, ped)
@@ -138,11 +167,11 @@ def checkgen(genotype_target, possible_inheritance, elders, target_CN, marker, s
                     c.execute("INSERT INTO consistent_offspring VALUES('{0}','{1}','{2}','{3}','{4}')".format(elders[0], marker, setname, ped, target_CN))
                     c.execute("INSERT INTO consistent_offspring VALUES('{0}','{1}','{2}','{3}','{4}')".format(elders[1], marker, setname, ped, target_CN))
                 elif genotype_target[0] in genotypedict[elders[0]] or genotype_target[1] in genotypedict[elders[0]]:
-                    addtoquest(target_CN, marker, 'parent', setname, ped)
+                    c.execute("INSERT INTO consistent_parents VALUES('{0}','{1}','{2}','{3}')".format(target_CN, marker, setname, ped))
                     addtoquest(elders[1], marker, 'offspring', setname, ped)
                     c.execute("INSERT INTO consistent_offspring VALUES('{0}','{1}','{2}','{3}','{4}')".format(elders[0], marker, setname, ped, target_CN))
                 elif genotype_target[0] in genotypedict[elders[1]] or genotype_target[1] in genotypedict[elders[1]]:
-                    addtoquest(target_CN, marker, 'parent', setname, ped)
+                    c.execute("INSERT INTO consistent_parents VALUES('{0}','{1}','{2}','{3}')".format(target_CN, marker, setname, ped))
                     addtoquest(elders[0], marker, 'offspring', setname, ped)
                     c.execute("INSERT INTO consistent_offspring VALUES('{0}','{1}','{2}','{3}','{4}')".format(elders[1], marker, setname, ped, target_CN))
                 else:
@@ -180,7 +209,6 @@ def checkgen(genotype_target, possible_inheritance, elders, target_CN, marker, s
                                 addtoquest(target_CN, marker, 'parent', setname, ped)
                                 addtoquest(elder, marker, 'offspring', setname, ped)
                 elif len(possible_inheritance['0'])==2:#both parents have a 0
-                    addtoquest(target_CN, marker, 'parent', setname, ped)
                     addtoquest(elders[0], marker, 'offspring', setname, ped)
                     addtoquest(elders[1], marker, 'offspring', setname, ped)
                 else: #this doesn't happen!
@@ -310,7 +338,8 @@ for setname in allsets: #set by set
                         if gen not in possible_inheritance_gp.keys():
                             possible_inheritance_gp[gen] = [CN_gp]
                         elif CN_gp not in possible_inheritance_gp[gen]:
-                            possible_inheritance_gp[gen].append(CN_gp)        
+                            possible_inheritance_gp[gen].append(CN_gp)
+
                 checkgen(genotype_p, possible_inheritance_gp, grandparents, CN_p, marker, setname, ped, I_genotypes)
                 
             for CN_kit in samples_III:
